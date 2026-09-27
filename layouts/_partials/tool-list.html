@@ -1,0 +1,13 @@
+{{- /* Lists every page in the tools section; shows a placeholder until the first one ships. */ -}}
+{{ with (site.GetPage "/tools").Pages }}
+<ul class="tools">
+  {{ range . }}
+  <li class="tool">
+    <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    <p>{{ .Description }}</p>
+  </li>
+  {{ end }}
+</ul>
+{{ else }}
+<p class="empty">The first tool is on its way. Watch <a href="{{ site.Params.github }}">GitHub</a> for the release.</p>
+{{ end }}

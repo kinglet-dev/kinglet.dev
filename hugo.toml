@@ -1,0 +1,13 @@
+baseURL = "https://kinglet.dev/"
+languageCode = "en-us"
+title = "Kinglet"
+enableRobotsTXT = true
+disableKinds = ["taxonomy", "term", "rss"]
+
+[params]
+  tagline = "Small tools that punch above their weight."
+  description = "Kinglet builds small, local-first developer tools: single binaries that run on your machine, with no account required."
+  github = "https://github.com/kinglet-dev"
+
+[caches.images]
+  dir = ":cacheDir/images"
