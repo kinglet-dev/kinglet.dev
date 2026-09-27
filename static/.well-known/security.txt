@@ -1,0 +1,5 @@
+Contact: https://github.com/kinglet-dev/kinglet.dev/security/advisories/new
+Expires: 2027-09-27T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://kinglet.dev/.well-known/security.txt
+Policy: https://github.com/kinglet-dev/kinglet.dev/blob/main/SECURITY.md
