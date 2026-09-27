@@ -1,5 +1,5 @@
 baseURL = "https://kinglet.dev/"
-languageCode = "en-us"
+locale = "en-US"
 title = "Kinglet"
 enableRobotsTXT = true
 disableKinds = ["taxonomy", "term", "rss"]
