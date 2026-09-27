@@ -23,6 +23,7 @@ check "tools catalog page exists" test -f "$site/tools/index.html"
 check "custom 404 page exists" test -f "$site/404.html"
 check "security headers file sets a CSP" grep -q "Content-Security-Policy" "$site/_headers"
 check "security headers file denies framing" grep -q "frame-ancestors 'none'" "$site/_headers"
+check "security headers file sets HSTS for a year" grep -q "Strict-Transport-Security: max-age=31536000; includeSubDomains" "$site/_headers"
 check "security.txt has a contact" grep -q "^Contact: https://" "$site/.well-known/security.txt"
 check "security.txt has an expiry" grep -q "^Expires: " "$site/.well-known/security.txt"
 # .dev is HSTS-preloaded; plain-http links would be broken or downgraded.
