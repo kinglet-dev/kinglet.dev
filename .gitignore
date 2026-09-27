@@ -1,0 +1,14 @@
+# Hugo build output and caches
+/public/
+/resources/_gen/
+/.hugo_build.lock
+/.cache/
+
+# Cloudflare / Wrangler local state
+/.wrangler/
+/node_modules/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
