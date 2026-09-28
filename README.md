@@ -1,18 +1,41 @@
-# kinglet.dev
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="static/images/kinglet-mascot-dark.svg">
+    <img src="static/images/kinglet-mascot.svg" alt="The Kinglet mascot: a small olive-green kinglet with a ruby crest, perched on a branch" width="160" height="160">
+  </picture>
+</p>
 
-Source for [kinglet.dev](https://kinglet.dev), the website for Kinglet's small,
-local-first tools. Built with [Hugo](https://gohugo.io/) and served as static
-assets by a Cloudflare Worker.
+<h1 align="center">kinglet.dev</h1>
+
+<p align="center">
+  Source for <a href="https://kinglet.dev">kinglet.dev</a>, the home of Kinglet's small, local-first developer tools.
+</p>
+
+<p align="center">
+  <a href="https://github.com/kinglet-dev/kinglet.dev/actions/workflows/ci.yml"><img src="https://github.com/kinglet-dev/kinglet.dev/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
+</p>
+
+A static site built with [Hugo](https://gohugo.io/) and served as static assets
+by a Cloudflare Worker. No JavaScript, no cookies, no analytics, no third-party
+fonts or scripts. Every build is checked before it can deploy: security
+headers, WCAG 2.2 AA colour contrast, self-hosted fonts, icons, image
+dimensions, SVG safety and a page-weight budget.
+
+## Prerequisites
+
+- [Hugo](https://gohugo.io/installation/) 0.166.0, standard edition
+- Python 3 (standard library only), used by the contrast check
+- Bash and Perl, used by the site checks (included in Linux and macOS; on
+  Windows use Git Bash or WSL)
 
 ## Run locally
-
-Install Hugo 0.166.0 (standard edition is enough) and Python 3 (for the contrast check), then:
 
 ```sh
 hugo server
 ```
 
-Open http://localhost:1313. Hugo runs the same on Windows, macOS, and Linux.
+Open http://localhost:1313.
 
 ## Build and check
 
@@ -27,19 +50,21 @@ hugo build --gc --minify --panicOnWarning --cleanDestinationDir
 bash scripts/check-site.sh public
 ```
 
+A failing check exits non-zero and blocks the deploy.
+
 ## Layout
 
 | Path | Purpose |
 |---|---|
 | `content/` | Pages. Each tool gets `content/tools/<tool>.md`. |
 | `layouts/` | Hand-written templates (no third-party theme). |
-| `assets/css/` | Stylesheet (minified and fingerprinted at build). |
-| `static/` | Copied as-is: `_headers` (security headers), `.well-known/security.txt`, `favicon.svg`. |
-| `static/fonts/` | Self-hosted Outfit and JetBrains Mono (SIL OFL 1.1), each with its licence. |
-| `static/images/` | Mascot SVGs (light and dark). |
 | `layouts/_partials/logo.html` | Inline logo; follows the theme through `currentColor`. |
+| `assets/css/` | Stylesheet with the brand tokens (minified and fingerprinted at build). |
+| `static/` | Copied as-is: `_headers` (security headers), `.well-known/security.txt`, favicons. |
+| `static/fonts/` | Self-hosted Outfit and JetBrains Mono, each with its licence. |
+| `static/images/` | Mascot SVGs (light and dark). |
 | `scripts/check-site.sh` | Checks the built site; runs in CI and before every deploy. |
-| `scripts/check-contrast.py` | WCAG 2.2 AA contrast of the colour tokens in both themes (Python standard library). |
+| `scripts/check-contrast.py` | WCAG 2.2 AA contrast of the colour tokens in both themes. |
 | `wrangler.jsonc` | Cloudflare Worker config. |
 
 ## Adding a tool
@@ -49,9 +74,34 @@ front matter. It appears on the home page and the tools catalog automatically.
 
 ## Deploy
 
-Cloudflare Workers Builds deploys `main` on every push (deploy command
-`npx wrangler deploy`). Pull requests run CI only.
+Cloudflare Workers Builds runs `build.sh` and deploys `main` on every push
+(deploy command `npx wrangler deploy`). Other branches get preview builds;
+pull requests also run CI on GitHub Actions.
+
+## Compatibility
+
+The site targets current Chrome, Safari, Firefox and Edge on Windows, macOS,
+Linux, iOS and Android, from 320 px phones to wide desktops, in light and dark
+mode.
+
+## Dependencies
+
+| Dependency | Used for | Licence |
+|---|---|---|
+| [Hugo](https://github.com/gohugoio/hugo) 0.166.0 | Building the site (pinned, checksum-verified) | Apache 2.0 |
+| [Outfit](https://github.com/Outfitio/Outfit-Fonts) | Brand typeface | SIL OFL 1.1 |
+| [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) | Code and terminal output | SIL OFL 1.1 |
+| [actions/checkout](https://github.com/actions/checkout) v7.0.1 | CI (pinned by commit SHA) | MIT |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Security
 
-See [SECURITY.md](SECURITY.md).
+Please report vulnerabilities privately; see [SECURITY.md](SECURITY.md).
+
+## Licence
+
+Code is [MIT](LICENSE). The fonts in `static/fonts/` keep their own SIL Open
+Font License 1.1, included next to each font.
