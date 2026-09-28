@@ -21,7 +21,11 @@ export PATH="${HOME}/.local/hugo:${PATH}"
 hugo version
 
 echo "Building the site..."
-HUGO_CACHEDIR="${PWD}/.cache/hugo" hugo build --gc --minify --panicOnWarning
+HUGO_CACHEDIR="${PWD}/.cache/hugo" hugo build --gc --minify --panicOnWarning --cleanDestinationDir
 
 echo "Checking the site..."
 bash scripts/check-site.sh public
+
+# Browser checks (Playwright) need system libraries that Cloudflare's build image
+# lacks, so they run in GitHub CI instead (.github/workflows/ci.yml). main is
+# protected: changes land only through pull requests whose CI passed.

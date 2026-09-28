@@ -1,0 +1,12 @@
+{
+  "name": "kinglet-dev-site",
+  "private": true,
+  "description": "Browser checks for kinglet.dev (test tooling only; nothing here ships to the site).",
+  "license": "MIT",
+  "scripts": {
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

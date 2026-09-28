@@ -8,6 +8,10 @@
 /.wrangler/
 /node_modules/
 
+# Playwright output
+/test-results/
+/playwright-report/
+
 # OS and editor files
 .DS_Store
 Thumbs.db

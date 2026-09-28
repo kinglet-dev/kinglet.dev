@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   build:
+    name: Build and check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -17,3 +18,9 @@ jobs:
           persist-credentials: false
       - name: Build and check the site
         run: bash build.sh
+      - name: Install the browser for the browser checks
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx playwright install --with-deps --only-shell chromium
+      - name: Run the browser checks
+        run: npx playwright test

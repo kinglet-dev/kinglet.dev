@@ -1,24 +1,41 @@
+/* Self-hosted fonts, both SIL OFL 1.1 (licences in /fonts/). Outfit is one variable file for all weights. */
+@font-face { font-family: Outfit; src: url("/fonts/Outfit-Variable.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+
+/* Kinglet brand tokens (see the brand notes). Every colour used below comes from here. */
 :root {
-  --bg: #fdfcf8; --fg: #1f2328; --muted: #59636e; --accent: #b8860b; --line: #e5e1d8;
+  --bg: #fafaf7; --fg: #16181d; --muted: #59636e; --line: #e5e1d8;
+  --link: #c4381e; --focus: #c4381e; --ruby: #e8472b;
+  --radius: .5rem;
+  --font-sans: Outfit, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #14161a; --fg: #e6e6e6; --muted: #9aa4af; --accent: #e3b341; --line: #2b2f36; }
+  :root { --bg: #101217; --fg: #f4f4f0; --muted: #9aa4af; --line: #2b2f36; --link: #e8472b; --focus: #e8472b; }
 }
 * { box-sizing: border-box; }
 body {
   margin: 0 auto; max-width: 46rem; padding: 0 1rem;
   background: var(--bg); color: var(--fg);
-  font: 1.0625rem/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
+  font-size: 1.0625rem; line-height: 1.6;
 }
-a { color: var(--accent); }
+code, kbd, pre, samp { font-family: var(--font-mono); font-size: .9375em; }
+a { color: var(--link); text-underline-offset: .15em; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
 .site-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
-.site-header nav a { margin-left: 1rem; }
-.brand { font-weight: 700; font-size: 1.25rem; color: var(--fg); text-decoration: none; }
+.site-header nav a { display: inline-flex; align-items: center; min-height: 2rem; margin-left: 1rem; }
+/* Touch screens: 44 px targets (Apple HIG); pointer targets stay at least 24 px (WCAG 2.5.8). */
+@media (pointer: coarse) { .site-header nav a { min-height: 2.75rem; padding: 0 .25rem; } }
+.brand { display: inline-flex; align-items: center; gap: .5rem; font-weight: 500; font-size: 1.5rem; letter-spacing: -.01em; color: var(--fg); text-decoration: none; }
+.logo { flex: none; }
 .hero { padding: 3rem 0 1.5rem; }
 .hero h1 { font-size: clamp(1.75rem, 5vw, 2.5rem); line-height: 1.2; margin: 0 0 1rem; }
 .hero p, .lead, .empty { color: var(--muted); }
 .tools { list-style: none; padding: 0; }
-.tool { border: 1px solid var(--line); border-radius: .5rem; padding: 1rem; margin-bottom: 1rem; }
+.tool { border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; }
 .tool h3 { margin: 0 0 .25rem; }
 .site-footer { margin-top: 4rem; padding: 1.5rem 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+.empty-state { text-align: center; padding: 2rem 0; }
+.mascot img { display: block; margin: 0 auto 1rem; }
