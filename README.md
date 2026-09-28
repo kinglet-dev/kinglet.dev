@@ -6,7 +6,7 @@ assets by a Cloudflare Worker.
 
 ## Run locally
 
-Install Hugo 0.166.0 (standard edition is enough), then:
+Install Hugo 0.166.0 (standard edition is enough) and Python 3 (for the contrast check), then:
 
 ```sh
 hugo server
@@ -34,8 +34,12 @@ bash scripts/check-site.sh public
 | `content/` | Pages. Each tool gets `content/tools/<tool>.md`. |
 | `layouts/` | Hand-written templates (no third-party theme). |
 | `assets/css/` | Stylesheet (minified and fingerprinted at build). |
-| `static/` | Copied as-is: `_headers` (security headers), `.well-known/security.txt`. |
+| `static/` | Copied as-is: `_headers` (security headers), `.well-known/security.txt`, `favicon.svg`. |
+| `static/fonts/` | Self-hosted Outfit and JetBrains Mono (SIL OFL 1.1), each with its licence. |
+| `static/images/` | Mascot SVGs (light and dark). |
+| `layouts/_partials/logo.html` | Inline logo; follows the theme through `currentColor`. |
 | `scripts/check-site.sh` | Checks the built site; runs in CI and before every deploy. |
+| `scripts/check-contrast.py` | WCAG 2.2 AA contrast of the colour tokens in both themes (Python standard library). |
 | `wrangler.jsonc` | Cloudflare Worker config. |
 
 ## Adding a tool
