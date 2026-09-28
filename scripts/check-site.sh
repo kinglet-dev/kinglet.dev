@@ -34,6 +34,19 @@ check "header shows the logo and wordmark as the home link" \
   perl -0ne 'exit(!/<a class=brand href=\/[^>]*><svg[^>]*aria-hidden=\"?true\"?[^>]*>.*?<\/svg>\s*<span>kinglet<\/span><\/a>/s)' "$site/index.html"
 check "pages declare the SVG favicon" grep -q '<link rel=icon href=/favicon.svg type=image/svg+xml>' "$site/index.html"
 check "favicon exists" test -f "$site/favicon.svg"
+# Raster fallbacks for browsers and platforms without SVG icons (rule: icon fallbacks).
+check "pages declare the ICO favicon fallback" grep -q '<link rel=icon href=/favicon.ico sizes=32x32>' "$site/index.html"
+check "pages declare the Apple touch icon" grep -q '<link rel=apple-touch-icon href=/apple-touch-icon.png>' "$site/index.html"
+check "favicon.ico holds 16, 32 and 48 px images" python3 -c '
+import struct, sys
+data = open(sys.argv[1], "rb").read()
+reserved, kind, count = struct.unpack_from("<HHH", data)
+sizes = sorted(data[6 + 16 * i] or 256 for i in range(count))
+sys.exit(not (reserved == 0 and kind == 1 and sizes == [16, 32, 48]))' "$site/favicon.ico"
+check "apple-touch-icon.png is a 180 px PNG" python3 -c '
+import struct, sys
+data = open(sys.argv[1], "rb").read(24)
+sys.exit(not (data[:8] == b"\x89PNG\r\n\x1a\n" and struct.unpack(">II", data[16:24]) == (180, 180)))' "$site/apple-touch-icon.png"
 # SVGs must contain no scripts or external references (rule: optimized, self-contained).
 check "SVG files contain no scripts" bash -c "! grep -rIl --include='*.svg' -i '<script' '$site'"
 check "SVG files contain no external references" bash -c "! grep -rIlE --include='*.svg' '(href|src)=\"(https?:)?//|url\\((https?:)?//' '$site'"
