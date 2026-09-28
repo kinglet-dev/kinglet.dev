@@ -25,7 +25,8 @@ dimensions, SVG safety and a page-weight budget.
 ## Prerequisites
 
 - [Hugo](https://gohugo.io/installation/) 0.166.0, standard edition
-- Python 3 (standard library only), used by the contrast check
+- Python 3 (standard library only), used by the contrast check and to serve the site for browser checks
+- Node.js 22 or later, used only for the browser checks
 - Bash and Perl, used by the site checks (included in Linux and macOS; on
   Windows use Git Bash or WSL)
 
@@ -48,9 +49,13 @@ Or, with Hugo already installed on any OS:
 ```sh
 hugo build --gc --minify --panicOnWarning --cleanDestinationDir
 bash scripts/check-site.sh public
+npm ci --ignore-scripts && npx playwright install chromium
+npx playwright test   # browser checks against ./public
 ```
 
-A failing check exits non-zero and blocks the deploy.
+A failing check exits non-zero and blocks the deploy. The browser checks load every page in
+Chromium, in light and dark mode and under the production Content-Security-Policy, and check
+320 px layouts, target sizes, keyboard focus, the mascot variant, fonts and reduced motion.
 
 ## Layout
 
@@ -65,6 +70,7 @@ A failing check exits non-zero and blocks the deploy.
 | `static/images/` | Mascot SVGs (light and dark). |
 | `scripts/check-site.sh` | Checks the built site; runs in CI and before every deploy. |
 | `scripts/check-contrast.py` | WCAG 2.2 AA contrast of the colour tokens in both themes. |
+| `tests/browser/`, `playwright.config.js` | Browser checks (Playwright). |
 | `wrangler.jsonc` | Cloudflare Worker config. |
 
 ## Adding a tool
@@ -91,6 +97,7 @@ mode.
 | [Hugo](https://github.com/gohugoio/hugo) 0.166.0 | Building the site (pinned, checksum-verified) | Apache 2.0 |
 | [Outfit](https://github.com/Outfitio/Outfit-Fonts) | Brand typeface | SIL OFL 1.1 |
 | [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) | Code and terminal output | SIL OFL 1.1 |
+| [Playwright](https://github.com/microsoft/playwright) 1.63.0 | Browser checks only; never shipped (pinned in `package-lock.json`) | Apache 2.0 |
 | [actions/checkout](https://github.com/actions/checkout) v7.0.1 | CI (pinned by commit SHA) | MIT |
 
 ## Contributing

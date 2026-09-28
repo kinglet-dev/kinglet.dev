@@ -25,3 +25,9 @@ HUGO_CACHEDIR="${PWD}/.cache/hugo" hugo build --gc --minify --panicOnWarning --c
 
 echo "Checking the site..."
 bash scripts/check-site.sh public
+
+# Browser checks (Playwright, pinned in package-lock.json; test tooling only, never shipped).
+echo "Running browser checks..."
+npm ci --ignore-scripts --no-audit --no-fund
+npx playwright install --only-shell chromium
+npx playwright test
