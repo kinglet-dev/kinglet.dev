@@ -21,7 +21,7 @@ export PATH="${HOME}/.local/hugo:${PATH}"
 hugo version
 
 echo "Building the site..."
-HUGO_CACHEDIR="${PWD}/.cache/hugo" hugo build --gc --minify --panicOnWarning
+HUGO_CACHEDIR="${PWD}/.cache/hugo" hugo build --gc --minify --panicOnWarning --cleanDestinationDir
 
 echo "Checking the site..."
 bash scripts/check-site.sh public
