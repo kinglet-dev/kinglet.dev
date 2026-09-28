@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Checks the built site in ./public for the behaviour the site promises.
-# Usage: hugo build --gc --minify && scripts/check-site.sh [public-dir]
+# Usage: hugo build --gc --minify --cleanDestinationDir && scripts/check-site.sh [public-dir]
 set -uo pipefail
 
 site="${1:-public}"
@@ -28,6 +28,15 @@ check "security.txt has a contact" grep -q "^Contact: https://" "$site/.well-kno
 check "security.txt has an expiry" grep -q "^Expires: " "$site/.well-known/security.txt"
 # .dev is HSTS-preloaded; plain-http links would be broken or downgraded.
 check "no plain http links in pages" bash -c "! grep -rIl --include='*.html' 'http://' '$site'"
+
+# WCAG 2.2 AA contrast of the colour tokens, light and dark (scripts/check-contrast.py).
+stylesheets=("$site"/css/main*.css)
+check "exactly one stylesheet is built" test "${#stylesheets[@]}" -eq 1 -a -f "${stylesheets[0]}"
+if python3 "$(dirname "$0")/check-contrast.py" "${stylesheets[0]}"; then
+  pass "colour tokens meet WCAG 2.2 AA contrast"
+else
+  fail "colour tokens meet WCAG 2.2 AA contrast"
+fi
 
 if [[ $failures -gt 0 ]]; then
   printf '\n%d check(s) failed\n' "$failures"

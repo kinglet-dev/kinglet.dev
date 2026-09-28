@@ -23,7 +23,7 @@ bash build.sh   # Linux (Cloudflare and CI): installs pinned Hugo, builds, check
 Or, with Hugo already installed on any OS:
 
 ```sh
-hugo build --gc --minify --panicOnWarning
+hugo build --gc --minify --panicOnWarning --cleanDestinationDir
 bash scripts/check-site.sh public
 ```
 
