@@ -29,6 +29,15 @@ check "security.txt has an expiry" grep -q "^Expires: " "$site/.well-known/secur
 # .dev is HSTS-preloaded; plain-http links would be broken or downgraded.
 check "no plain http links in pages" bash -c "! grep -rIl --include='*.html' 'http://' '$site'"
 
+# Brand: logo beside the lowercase wordmark; the logo is decorative because the link text names it.
+check "header shows the logo and wordmark as the home link" \
+  perl -0ne 'exit(!/<a class=brand href=\/[^>]*><svg[^>]*aria-hidden=\"?true\"?[^>]*>.*?<\/svg>\s*<span>kinglet<\/span><\/a>/s)' "$site/index.html"
+check "pages declare the SVG favicon" grep -q '<link rel=icon href=/favicon.svg type=image/svg+xml>' "$site/index.html"
+check "favicon exists" test -f "$site/favicon.svg"
+# SVGs must contain no scripts or external references (rule: optimized, self-contained).
+check "SVG files contain no scripts" bash -c "! grep -rIl --include='*.svg' -i '<script' '$site'"
+check "SVG files contain no external references" bash -c "! grep -rIlE --include='*.svg' '(href|src)=\"(https?:)?//|url\\((https?:)?//' '$site'"
+
 # Fonts are self-hosted (privacy rule) and ship with their SIL OFL 1.1 licences.
 check "Outfit font is self-hosted" test -f "$site/fonts/Outfit-Variable.woff2"
 check "JetBrains Mono font is self-hosted" test -f "$site/fonts/JetBrainsMono-Regular.woff2"
