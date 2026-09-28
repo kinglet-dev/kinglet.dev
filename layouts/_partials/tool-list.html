@@ -9,5 +9,8 @@
   {{ end }}
 </ul>
 {{ else }}
+<div class="empty-state">
+{{ partial "mascot.html" . }}
 <p class="empty">The first tool is on its way. Watch <a href="{{ site.Params.github }}">GitHub</a> for the release.</p>
+</div>
 {{ end }}
