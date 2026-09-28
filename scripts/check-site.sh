@@ -29,6 +29,16 @@ check "security.txt has an expiry" grep -q "^Expires: " "$site/.well-known/secur
 # .dev is HSTS-preloaded; plain-http links would be broken or downgraded.
 check "no plain http links in pages" bash -c "! grep -rIl --include='*.html' 'http://' '$site'"
 
+# Fonts are self-hosted (privacy rule) and ship with their SIL OFL 1.1 licences.
+check "Outfit font is self-hosted" test -f "$site/fonts/Outfit-Variable.woff2"
+check "JetBrains Mono font is self-hosted" test -f "$site/fonts/JetBrainsMono-Regular.woff2"
+check "Outfit licence ships with the font" grep -q "SIL Open Font License" "$site/fonts/Outfit-OFL.txt"
+check "JetBrains Mono licence ships with the font" grep -q "SIL Open Font License" "$site/fonts/JetBrainsMono-OFL.txt"
+check "stylesheet uses Outfit" grep -q -- "--font-sans:Outfit" "$site"/css/main*.css
+check "stylesheet uses JetBrains Mono for code" grep -q '"JetBrains Mono"' "$site"/css/main*.css
+check "home page preloads Outfit" grep -q 'rel=preload[^>]*Outfit-Variable.woff2' "$site/index.html"
+check "no third-party font hosts" bash -c "! grep -rIlE 'fonts\.(googleapis|gstatic)\.com' '$site'"
+
 # WCAG 2.2 AA contrast of the colour tokens, light and dark (scripts/check-contrast.py).
 stylesheets=("$site"/css/main*.css)
 check "exactly one stylesheet is built" test "${#stylesheets[@]}" -eq 1 -a -f "${stylesheets[0]}"
