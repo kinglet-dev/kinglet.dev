@@ -112,3 +112,5 @@ Please report vulnerabilities privately; see [SECURITY.md](SECURITY.md).
 
 Code is [MIT](LICENSE). The fonts in `static/fonts/` keep their own SIL Open
 Font License 1.1, included next to each font.
+The Kinglet name, logo and mascot are not covered by the MIT License; see
+[TRADEMARKS.md](TRADEMARKS.md).
