@@ -41,7 +41,7 @@ Open http://localhost:1313.
 ## Build and check
 
 ```sh
-bash build.sh   # Linux (Cloudflare and CI): installs pinned Hugo, builds, checks
+bash build.sh   # Linux (Cloudflare and CI): installs pinned Hugo, builds, runs the site checks
 ```
 
 Or, with Hugo already installed on any OS:
@@ -53,7 +53,7 @@ npm ci --ignore-scripts && npx playwright install chromium
 npx playwright test   # browser checks against ./public
 ```
 
-A failing check exits non-zero and blocks the deploy. The browser checks load every page in
+A failing check exits non-zero. The browser checks load every page in
 Chromium, in light and dark mode and under the production Content-Security-Policy, and check
 320 px layouts, target sizes, keyboard focus, the mascot variant, fonts and reduced motion.
 
@@ -80,9 +80,17 @@ front matter. It appears on the home page and the tools catalog automatically.
 
 ## Deploy
 
-Cloudflare Workers Builds runs `build.sh` and deploys `main` on every push
-(deploy command `npx wrangler deploy`). Other branches get preview builds;
-pull requests also run CI on GitHub Actions.
+Changes reach `main` only through pull requests whose CI passed: `main` is
+protected by a GitHub ruleset that requires the **Build and check** status
+check, blocks direct and force pushes, and has no bypass.
+
+- **GitHub Actions (CI)** runs `build.sh` (build and site checks), then the
+  browser checks, on every pull request and on `main`.
+- **Cloudflare Workers Builds** runs `build.sh` again and deploys `main` on
+  every push (deploy command `npx wrangler deploy`); other branches get
+  preview builds. The browser checks don't run there because Cloudflare's
+  build image lacks the system libraries Chromium needs, which is why the
+  protected branch is what keeps a failing browser check from deploying.
 
 ## Compatibility
 
