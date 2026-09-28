@@ -25,7 +25,9 @@ code, kbd, pre, samp { font-family: var(--font-mono); font-size: .9375em; }
 a { color: var(--link); text-underline-offset: .15em; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
 .site-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
-.site-header nav a { margin-left: 1rem; }
+.site-header nav a { display: inline-flex; align-items: center; min-height: 2rem; margin-left: 1rem; }
+/* Touch screens: 44 px targets (Apple HIG); pointer targets stay at least 24 px (WCAG 2.5.8). */
+@media (pointer: coarse) { .site-header nav a { min-height: 2.75rem; padding: 0 .25rem; } }
 .brand { display: inline-flex; align-items: center; gap: .5rem; font-weight: 500; font-size: 1.5rem; letter-spacing: -.01em; color: var(--fg); text-decoration: none; }
 .logo { flex: none; }
 .hero { padding: 3rem 0 1.5rem; }
