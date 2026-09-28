@@ -56,6 +56,12 @@ check "stylesheet uses JetBrains Mono for code" grep -q '"JetBrains Mono"' "$sit
 check "home page preloads Outfit" grep -q 'rel=preload[^>]*Outfit-Variable.woff2' "$site/index.html"
 check "no third-party font hosts" bash -c "! grep -rIlE 'fonts\.(googleapis|gstatic)\.com' '$site'"
 
+# Performance budget (Core Web Vitals guard): the home page and everything it loads
+# up front stays under 100 KB before compression, so LCP stays well inside 2.5 s.
+home_bytes=$(cat "$site/index.html" "$site"/css/main*.css "$site/fonts/Outfit-Variable.woff2" \
+  "$site/favicon.svg" "$site/images/kinglet-mascot.svg" 2>/dev/null | wc -c)
+check "home page weight is under 100 KB (is $((home_bytes / 1024)) KB)" test "$home_bytes" -lt 102400
+
 # WCAG 2.2 AA contrast of the colour tokens, light and dark (scripts/check-contrast.py).
 stylesheets=("$site"/css/main*.css)
 check "exactly one stylesheet is built" test "${#stylesheets[@]}" -eq 1 -a -f "${stylesheets[0]}"
