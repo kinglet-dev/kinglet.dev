@@ -35,3 +35,5 @@ a { color: var(--link); text-underline-offset: .15em; }
 .tool { border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; }
 .tool h3 { margin: 0 0 .25rem; }
 .site-footer { margin-top: 4rem; padding: 1.5rem 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+.empty-state { text-align: center; padding: 2rem 0; }
+.mascot img { display: block; margin: 0 auto 1rem; }

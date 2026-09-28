@@ -37,6 +37,14 @@ check "favicon exists" test -f "$site/favicon.svg"
 # SVGs must contain no scripts or external references (rule: optimized, self-contained).
 check "SVG files contain no scripts" bash -c "! grep -rIl --include='*.svg' -i '<script' '$site'"
 check "SVG files contain no external references" bash -c "! grep -rIlE --include='*.svg' '(href|src)=\"(https?:)?//|url\\((https?:)?//' '$site'"
+# Mascot: only on the 404 page and empty states, with a dark-theme variant.
+mascot='<picture[^>]*><source srcset=/images/kinglet-mascot-dark.svg media="\(prefers-color-scheme: ?dark\)"><img src=/images/kinglet-mascot.svg alt'
+check "404 page shows the mascot" grep -qE "$mascot" "$site/404.html"
+check "mascot files exist" test -f "$site/images/kinglet-mascot.svg" -a -f "$site/images/kinglet-mascot-dark.svg"
+check "tools empty state shows the mascot" bash -c "! grep -q 'class=empty' '$site/tools/index.html' || grep -qE '$mascot' '$site/tools/index.html'"
+# Every image has alt text and fixed dimensions (no layout shift, CLS).
+check "every img has alt, width and height" \
+  perl -0ne 'while (/<img\b([^>]*)>/g) { my $a = $1; $bad++ unless $a =~ /\balt\b/ && $a =~ /\bwidth=/ && $a =~ /\bheight=/ } END { exit($bad > 0) }' $(find "$site" -name '*.html')
 
 # Fonts are self-hosted (privacy rule) and ship with their SIL OFL 1.1 licences.
 check "Outfit font is self-hosted" test -f "$site/fonts/Outfit-Variable.woff2"
