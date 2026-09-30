@@ -50,8 +50,9 @@ sys.exit(not (data[:8] == b"\x89PNG\r\n\x1a\n" and struct.unpack(">II", data[16:
 # SVGs must contain no scripts or external references (rule: optimized, self-contained).
 check "SVG files contain no scripts" bash -c "! grep -rIl --include='*.svg' -i '<script' '$site'"
 check "SVG files contain no external references" bash -c "! grep -rIlE --include='*.svg' '(href|src)=\"(https?:)?//|url\\((https?:)?//' '$site'"
-# Mascot: only on the 404 page and empty states, with a dark-theme variant.
+# Mascot: in the home page hero, on the 404 page and in empty states, with a dark-theme variant.
 mascot='<picture[^>]*><source srcset=/images/kinglet-mascot-dark.svg media="\(prefers-color-scheme: ?dark\)"><img src=/images/kinglet-mascot.svg alt'
+check "home page hero shows the mascot" grep -qE "<section class=hero>.*$mascot" "$site/index.html"
 check "404 page shows the mascot" grep -qE "$mascot" "$site/404.html"
 check "mascot files exist" test -f "$site/images/kinglet-mascot.svg" -a -f "$site/images/kinglet-mascot-dark.svg"
 check "tools empty state shows the mascot" bash -c "! grep -q 'class=empty' '$site/tools/index.html' || grep -qE '$mascot' '$site/tools/index.html'"
