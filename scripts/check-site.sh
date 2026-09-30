@@ -72,6 +72,9 @@ check "no third-party font hosts" bash -c "! grep -rIlE 'fonts\.(googleapis|gsta
 # The CSP (style-src 'self') blocks inline styles, which Hugo's code highlighting would add.
 check "pages have no inline style attributes" bash -c "! grep -rIlE --include='*.html' '<[^>]+ style=' '$site'"
 
+# The home page speaks to everyone the tools serve (laserlint is for laser makers), not only developers.
+check "home page says Kinglet builds small tools for anyone" grep -q 'Kinglet builds small tools that run on your computer' "$site/index.html"
+
 # laserlint's product page (rule: what it does, a real example, how to install, and
 # links to docs, source, changelog and security contact).
 tool="$site/tools/laserlint/index.html"
