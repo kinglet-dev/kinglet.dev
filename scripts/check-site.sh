@@ -69,6 +69,12 @@ check "stylesheet uses JetBrains Mono for code" grep -q '"JetBrains Mono"' "$sit
 check "home page preloads Outfit" grep -q 'rel=preload[^>]*Outfit-Variable.woff2' "$site/index.html"
 check "no third-party font hosts" bash -c "! grep -rIlE 'fonts\.(googleapis|gstatic)\.com' '$site'"
 
+# The CSP (style-src 'self') blocks inline styles, which Hugo's code highlighting would add.
+check "pages have no inline style attributes" bash -c "! grep -rIlE --include='*.html' '<[^>]+ style=' '$site'"
+
+# Code blocks scroll sideways on small screens, so keyboard users must be able to reach them (WCAG 2.1.1).
+check "code blocks can be scrolled with the keyboard" bash -c "! grep -rIlE --include='*.html' '<pre>' '$site'"
+
 # Performance budget (Core Web Vitals guard): the home page and everything it loads
 # up front stays under 100 KB before compression, so LCP stays well inside 2.5 s.
 home_bytes=$(cat "$site/index.html" "$site"/css/main*.css "$site/fonts/Outfit-Variable.woff2" \

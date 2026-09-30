@@ -23,6 +23,8 @@ body {
   font-size: 1.0625rem; line-height: 1.6;
 }
 code, kbd, pre, samp { font-family: var(--font-mono); font-size: .9375em; }
+/* Long commands and paths in running text wrap instead of widening the page on small screens. */
+:not(pre) > code { overflow-wrap: anywhere; }
 a { color: var(--link); text-underline-offset: .15em; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
 .site-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
@@ -40,3 +42,5 @@ a { color: var(--link); text-underline-offset: .15em; }
 .site-footer { margin-top: 4rem; padding: 1.5rem 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
 .empty-state { text-align: center; padding: 2rem 0; }
 .mascot img { display: block; margin: 0 auto 1rem; }
+pre { overflow-x: auto; padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius); font-size: .8125rem; line-height: 1.5; }
+pre:focus-visible { outline-offset: 0; }
