@@ -6,7 +6,7 @@ disableKinds = ["taxonomy", "term", "rss"]
 
 [params]
   tagline = "Small tools that punch above their weight."
-  description = "Kinglet builds small, local-first developer tools: single binaries that run on your machine, with no account required."
+  description = "Kinglet builds small tools that run on your computer: one program each, nothing else to install, and no account required."
   github = "https://github.com/kinglet-dev"
 
 [caches.images]
