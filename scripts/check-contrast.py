@@ -3,20 +3,21 @@
 
 Reads the built stylesheet, takes the custom properties declared on :root
 (light theme) and inside @media (prefers-color-scheme: dark) (dark theme), and
-checks each foreground token against the background token.
+checks each foreground token against its background token.
 Standard library only. Usage: check-contrast.py <stylesheet.css>
 """
 import re
 import sys
 
-# (foreground token, minimum ratio, why): WCAG 2.2 SC 1.4.3 and 1.4.11.
+# (foreground token, minimum ratio, why, background token): WCAG 2.2 SC 1.4.3 and 1.4.11.
 PAIRS = [
-    ("--fg", 4.5, "body text"),
-    ("--muted", 4.5, "secondary text"),
-    ("--link", 4.5, "link text"),
-    ("--focus", 3.0, "focus indicator"),
+    ("--fg", 4.5, "body text", "--bg"),
+    ("--muted", 4.5, "secondary text", "--bg"),
+    ("--link", 4.5, "link text", "--bg"),
+    ("--focus", 3.0, "focus indicator", "--bg"),
+    ("--button-fg", 4.5, "button text", "--button-bg"),
+    ("--button-bg", 3.0, "button edge", "--bg"),
 ]
-BACKGROUND = "--bg"
 
 HEX = re.compile(r"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
 DARK_BLOCK = re.compile(r"@media\s*\(\s*prefers-color-scheme\s*:\s*dark\s*\)\s*\{\s*:root\s*\{([^}]*)\}")
@@ -66,15 +67,15 @@ def main(path):
             print(f"FAIL  {theme} theme: no @media (prefers-color-scheme: dark) :root block")
             failures += 1
             continue
-        for token, minimum, why in PAIRS:
-            if token not in values or BACKGROUND not in values:
-                print(f"FAIL  {theme} {why}: {token} or {BACKGROUND} is not defined")
+        for token, minimum, why, background in PAIRS:
+            if token not in values or background not in values:
+                print(f"FAIL  {theme} {why}: {token} or {background} is not defined")
                 failures += 1
                 continue
-            value = ratio(values[token], values[BACKGROUND])
+            value = ratio(values[token], values[background])
             status = "ok  " if value >= minimum else "FAIL"
             failures += status == "FAIL"
-            print(f"{status}  {theme} {why}: {token} {values[token]} on {values[BACKGROUND]} "
+            print(f"{status}  {theme} {why}: {token} {values[token]} on {values[background]} "
                   f"is {value:.2f}:1 (needs {minimum}:1)")
     return 1 if failures else 0
 
