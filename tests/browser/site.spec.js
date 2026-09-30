@@ -2,7 +2,7 @@
 const { test, expect } = require("@playwright/test");
 const { serveWithCsp } = require("./csp");
 
-const pages = ["/", "/tools/", "/404.html"];
+const pages = ["/", "/tools/", "/tools/laserlint/", "/404.html"];
 const headerLinks = ".site-header nav a";
 
 for (const colorScheme of ["light", "dark"]) {

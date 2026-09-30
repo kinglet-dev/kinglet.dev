@@ -2,6 +2,19 @@
 <article>
   <h1>{{ .Title }}</h1>
   {{ with .Description }}<p class="lead">{{ . }}</p>{{ end }}
+  {{- /* Tool pages: a diagram for each theme, then the primary action (download) and the source. */ -}}
+  {{ with .Params.hero }}
+  <picture class="hero-image">
+    <source srcset="{{ printf "images/tools/%s-dark.svg" . | relURL }}" media="(prefers-color-scheme: dark)">
+    <img src="{{ printf "images/tools/%s-light.svg" . | relURL }}" alt="{{ $.Params.heroAlt }}" width="880" height="330">
+  </picture>
+  {{ end }}
+  {{ with .Params.download }}
+  <p class="actions">
+    <a class="button" href="{{ . }}">Download</a>
+    {{ with $.Params.source }}<a href="{{ . }}">Source on GitHub</a>{{ end }}
+  </p>
+  {{ end }}
   {{ .Content }}
 </article>
 {{ end }}
