@@ -69,6 +69,27 @@ check "stylesheet uses JetBrains Mono for code" grep -q '"JetBrains Mono"' "$sit
 check "home page preloads Outfit" grep -q 'rel=preload[^>]*Outfit-Variable.woff2' "$site/index.html"
 check "no third-party font hosts" bash -c "! grep -rIlE 'fonts\.(googleapis|gstatic)\.com' '$site'"
 
+# The CSP (style-src 'self') blocks inline styles, which Hugo's code highlighting would add.
+check "pages have no inline style attributes" bash -c "! grep -rIlE --include='*.html' '<[^>]+ style=' '$site'"
+
+# laserlint's product page (rule: what it does, a real example, how to install, and
+# links to docs, source, changelog and security contact).
+tool="$site/tools/laserlint/index.html"
+repo="https://github.com/kinglet-dev/laserlint"
+check "laserlint page exists" test -f "$tool"
+check "home page lists laserlint" grep -q 'href=/tools/laserlint/' "$site/index.html"
+check "laserlint page says what it does" grep -q '<p class=lead>Checks an SVG before you laser it' "$tool"
+check "laserlint page shows a real example with its verdict" grep -q 'Not ready to burn: 1 problem and 4 warnings.' "$tool"
+check "laserlint page links to the latest release for installing" grep -q "href=$repo/releases/latest" "$tool"
+check "laserlint page links to the source" grep -q "href=$repo>" "$tool"
+check "laserlint page links to the documentation" grep -q "href=$repo#usage" "$tool"
+check "laserlint page links to the changelog" grep -q "href=$repo/blob/main/CHANGELOG.md" "$tool"
+check "laserlint page links to the security policy" grep -q "href=$repo/blob/main/SECURITY.md" "$tool"
+# Code blocks scroll sideways on small screens, so keyboard users must be able to reach them (WCAG 2.1.1).
+check "code blocks can be scrolled with the keyboard" bash -c "! grep -rIlE --include='*.html' '<pre>' '$site'"
+check "laserlint page shows its diagram in both themes" \
+  grep -qE '<picture[^>]*><source srcset=/images/tools/laserlint-hero-dark.svg media="\(prefers-color-scheme: ?dark\)"><img src=/images/tools/laserlint-hero-light.svg alt' "$tool"
+
 # Performance budget (Core Web Vitals guard): the home page and everything it loads
 # up front stays under 100 KB before compression, so LCP stays well inside 2.5 s.
 home_bytes=$(cat "$site/index.html" "$site"/css/main*.css "$site/fonts/Outfit-Variable.woff2" \

@@ -6,13 +6,14 @@
 :root {
   --bg: #fafaf7; --fg: #16181d; --muted: #59636e; --line: #e5e1d8;
   --link: #c4381e; --focus: #c4381e; --ruby: #e8472b;
+  --button-bg: #c4381e; --button-fg: #ffffff;
   --radius: .5rem;
   --font-sans: Outfit, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #101217; --fg: #f4f4f0; --muted: #9aa4af; --line: #2b2f36; --link: #e8472b; --focus: #e8472b; }
+  :root { --bg: #101217; --fg: #f4f4f0; --muted: #9aa4af; --line: #2b2f36; --link: #e8472b; --focus: #e8472b; --button-bg: #e8472b; --button-fg: #101217; }
 }
 * { box-sizing: border-box; }
 body {
@@ -22,6 +23,8 @@ body {
   font-size: 1.0625rem; line-height: 1.6;
 }
 code, kbd, pre, samp { font-family: var(--font-mono); font-size: .9375em; }
+/* Long commands and paths in running text wrap instead of widening the page on small screens. */
+:not(pre) > code { overflow-wrap: anywhere; }
 a { color: var(--link); text-underline-offset: .15em; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
 .site-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
@@ -39,3 +42,11 @@ a { color: var(--link); text-underline-offset: .15em; }
 .site-footer { margin-top: 4rem; padding: 1.5rem 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
 .empty-state { text-align: center; padding: 2rem 0; }
 .mascot img { display: block; margin: 0 auto 1rem; }
+.hero-image { display: block; margin: 1.5rem 0; }
+.hero-image img { display: block; width: 100%; height: auto; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; margin: 1.5rem 0; }
+.button { display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 1.25rem; border-radius: var(--radius); background: var(--button-bg); color: var(--button-fg); font-weight: 500; text-decoration: none; }
+pre { overflow-x: auto; padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius); font-size: .8125rem; line-height: 1.5; }
+pre:focus-visible { outline-offset: 0; }
+table { display: block; overflow-x: auto; border-collapse: collapse; font-size: .9375rem; }
+th, td { padding: .5rem .75rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }

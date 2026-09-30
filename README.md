@@ -45,6 +45,19 @@ npx playwright test   # browser checks against ./public
 Create `content/tools/<tool>.md` with a `title` and `description` in the
 front matter. It appears on the home page and the tools catalog automatically.
 
+A tool page also needs, per the product-page rule, a real example, how to
+install it, and links to docs, source, changelog and security policy
+(`content/tools/laserlint.md` is the model). Optional front matter:
+
+- `hero`: a diagram name; put `<hero>-light.svg` and `<hero>-dark.svg`
+  (880 × 330, no scripts or external references) in `static/images/tools/`,
+  and describe it in `heroAlt`.
+- `download`: the latest-release URL, shown as the page's Download button.
+- `source`: the repository URL, shown beside it.
+
+Add the page's required content to `scripts/check-site.sh` and its path to
+`tests/browser/site.spec.js`, failing first.
+
 ## Deploy
 
 `main` is protected: changes land only through pull requests whose
