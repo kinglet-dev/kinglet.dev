@@ -80,17 +80,19 @@ for (const colorScheme of ["light", "dark"]) {
       }
     });
 
-    test("the mascot matches the theme", async ({ page }) => {
-      // Arrange
-      const expected = colorScheme === "dark" ? "kinglet-mascot-dark.svg" : "kinglet-mascot.svg";
+    for (const path of ["/", "/404.html"]) {
+      test(`the mascot on ${path} matches the theme`, async ({ page }) => {
+        // Arrange
+        const expected = colorScheme === "dark" ? "kinglet-mascot-dark.svg" : "kinglet-mascot.svg";
 
-      // Act
-      await page.goto("/404.html");
-      const source = await page.locator(".mascot img").evaluate((img) => img.currentSrc);
+        // Act
+        await page.goto(path);
+        const source = await page.locator(".mascot img").evaluate((img) => img.currentSrc);
 
-      // Assert
-      expect(source.endsWith(`/images/${expected}`)).toBe(true);
-    });
+        // Assert
+        expect(source.endsWith(`/images/${expected}`)).toBe(true);
+      });
+    }
 
     test("the Outfit brand font is loaded from the site itself", async ({ page }) => {
       // Arrange

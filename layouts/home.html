@@ -1,7 +1,10 @@
 {{ define "main" }}
 <section class="hero">
-  <h1>{{ site.Params.tagline }}</h1>
-  <p>{{ site.Params.description }}</p>
+  <div>
+    <h1>{{ site.Params.tagline }}</h1>
+    <p>{{ site.Params.description }}</p>
+  </div>
+  {{ partial "mascot.html" . }}
 </section>
 <section>
   <h2><a href="{{ "/tools/" | relURL }}">Tools</a></h2>
