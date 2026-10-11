@@ -24,11 +24,11 @@ Each finding is a problem, a warning or information, with where it is (in mm fro
 
 ## Example
 
-The [coaster example](https://github.com/kinglet-dev/laserlint/blob/main/examples/coaster.svg) from the repository, checked with laserlint 0.1.1:
+The [coaster example](https://github.com/kinglet-dev/laserlint/blob/main/examples/coaster.svg) from the repository, checked with laserlint 0.1.2:
 
 ```text
 $ laserlint coaster.svg
-laserlint 0.1.1 · coaster.svg · 60.0 × 60.0 mm · line 0.10 mm · gap 0.25 mm
+laserlint 0.1.2 · coaster.svg · 60.0 × 60.0 mm · line 0.10 mm · gap 0.25 mm
 
 PROBLEM  Lines too close
          38.7% of scored line is within 0.35 mm of other line, centre to centre (limit 10%); nearest 0.02 mm
