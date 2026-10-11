@@ -76,23 +76,29 @@ check "pages have no inline style attributes" bash -c "! grep -rIlE --include='*
 # The home page speaks to everyone the tools serve (laserlint is for laser makers), not only developers.
 check "home page says Kinglet builds small tools for anyone" grep -q 'Kinglet builds small tools that run on your computer' "$site/index.html"
 
-# laserlint's product page (rule: what it does, a real example, how to install, and
+# Each tool's product page (rule: what it does, a real example, how to install, and
 # links to docs, source, changelog and security contact).
-tool="$site/tools/laserlint/index.html"
-repo="https://github.com/kinglet-dev/laserlint"
-check "laserlint page exists" test -f "$tool"
-check "home page lists laserlint" grep -q 'href=/tools/laserlint/' "$site/index.html"
-check "laserlint page says what it does" grep -q '<p class=lead>Checks an SVG before you laser it' "$tool"
-check "laserlint page shows a real example with its verdict" grep -q 'Not ready to burn: 1 problem and 4 warnings.' "$tool"
-check "laserlint page links to the latest release for installing" grep -q "href=$repo/releases/latest" "$tool"
-check "laserlint page links to the source" grep -q "href=$repo>" "$tool"
-check "laserlint page links to the documentation" grep -q "href=$repo#usage" "$tool"
-check "laserlint page links to the changelog" grep -q "href=$repo/blob/main/CHANGELOG.md" "$tool"
-check "laserlint page links to the security policy" grep -q "href=$repo/blob/main/SECURITY.md" "$tool"
+# Usage: tool_page NAME LEAD EXAMPLE, with the start of its lead and a line of its example.
+tool_page() {
+  local name=$1 lead=$2 example=$3
+  local tool="$site/tools/$name/index.html" repo="https://github.com/kinglet-dev/$name"
+  check "$name page exists" test -f "$tool"
+  check "home page lists $name" grep -q "href=/tools/$name/" "$site/index.html"
+  check "$name page says what it does" grep -q "<p class=lead>$lead" "$tool"
+  check "$name page shows a real example" grep -qF "$example" "$tool"
+  check "$name page links to the latest release for installing" grep -q "href=$repo/releases/latest" "$tool"
+  check "$name page links to the source" grep -q "href=$repo>" "$tool"
+  check "$name page links to the documentation" grep -q "href=$repo#usage" "$tool"
+  check "$name page links to the changelog" grep -q "href=$repo/blob/main/CHANGELOG.md" "$tool"
+  check "$name page links to the security policy" grep -q "href=$repo/blob/main/SECURITY.md" "$tool"
+  check "$name page shows its diagram in both themes" \
+    grep -qE "<picture[^>]*><source srcset=/images/tools/$name-hero-dark.svg media=\"\\(prefers-color-scheme: ?dark\\)\"><img src=/images/tools/$name-hero-light.svg alt" "$tool"
+}
+tool_page laserlint "Checks an SVG before you laser it" "Not ready to burn: 1 problem and 4 warnings."
+tool_page laserfix "Repairs an SVG so your laser burns each line once" "Line burned twice   248.5 mm → 0.0 mm"
+
 # Code blocks scroll sideways on small screens, so keyboard users must be able to reach them (WCAG 2.1.1).
 check "code blocks can be scrolled with the keyboard" bash -c "! grep -rIlE --include='*.html' '<pre>' '$site'"
-check "laserlint page shows its diagram in both themes" \
-  grep -qE '<picture[^>]*><source srcset=/images/tools/laserlint-hero-dark.svg media="\(prefers-color-scheme: ?dark\)"><img src=/images/tools/laserlint-hero-light.svg alt' "$tool"
 
 # Performance budget (Core Web Vitals guard): the home page and everything it loads
 # up front stays under 100 KB before compression, so LCP stays well inside 2.5 s.
