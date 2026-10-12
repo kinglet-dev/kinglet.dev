@@ -25,16 +25,16 @@ Each finding is a problem, a warning or information, with where it is (in mm fro
 
 ## Example
 
-The [coaster example](https://github.com/kinglet-dev/laserlint/blob/main/examples/coaster.svg) from the repository, checked with laserlint 0.1.2:
+The [coaster example](https://github.com/kinglet-dev/laserlint/blob/main/examples/coaster.svg) from the repository, checked with laserlint 0.1.3:
 
 ```text
 $ laserlint coaster.svg
-laserlint 0.1.2 · coaster.svg · 60.0 × 60.0 mm · line 0.10 mm · gap 0.25 mm
+laserlint 0.1.3 · coaster.svg · 60.0 × 60.0 mm · line 0.10 mm · gap 0.25 mm
 
 PROBLEM  Lines too close
-         38.7% of scored line is within 0.35 mm of other line, centre to centre (limit 10%); nearest 0.02 mm
+         38.7% of scored line is within 0.35 mm of other line, center to center (limit 10%); nearest 0.02 mm
          Where: (30.0, 40.0), (43.7, 24.7), (43.7, 26.2), (43.7, 27.7), (16.1, 23.9) mm from the top-left
-         Fix: Space lines at least 0.35 mm apart, centre to centre, or remove fine detail; blunt or shorten very sharp points.
+         Fix: Space lines at least 0.35 mm apart, center to center, or remove fine detail; blunt or shorten very sharp points.
 WARNING  Crossings
          1 place where score lines cross or one ends on another, burning twice (problem above 50)
          Where: (30.0, 40.0) mm from the top-left
@@ -77,6 +77,6 @@ laserlint runs entirely on your computer. It never connects to the internet, and
 
 - [Documentation](https://github.com/kinglet-dev/laserlint#usage): usage, flags and every check in detail
 - [Changelog](https://github.com/kinglet-dev/laserlint/blob/main/CHANGELOG.md)
-- [Source](https://github.com/kinglet-dev/laserlint) (MIT licence)
+- [Source](https://github.com/kinglet-dev/laserlint) (MIT license)
 - [Security policy](https://github.com/kinglet-dev/laserlint/blob/main/SECURITY.md): how to report a vulnerability
 - [Issues](https://github.com/kinglet-dev/laserlint/issues): report a bug or ask for a check

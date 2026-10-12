@@ -97,6 +97,10 @@ tool_page() {
 tool_page laserlint "Checks an SVG before you laser it" "Not ready to burn: 1 problem and 4 warnings."
 tool_page laserfix "Repairs an SVG so your laser burns each line once" "Line burned twice   248.5 mm → 0.0 mm"
 
+# American English everywhere (brand rule): no British spellings in any page.
+british='\b(centre|colour|licence|behaviour|favourite|metre|millimetre|catalogue|grey|organis|recognis|optimis|customis|summaris|analys(e|es|ed|ing))'
+check "pages use American spelling" bash -c "! grep -rIliE --include='*.html' '$british' '$site'"
+
 # Code blocks scroll sideways on small screens, so keyboard users must be able to reach them (WCAG 2.1.1).
 check "code blocks can be scrolled with the keyboard" bash -c "! grep -rIlE --include='*.html' '<pre>' '$site'"
 
