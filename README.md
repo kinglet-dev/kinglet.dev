@@ -66,9 +66,9 @@ checks. Cloudflare Workers Builds runs `build.sh` again and deploys `main`;
 other branches get preview builds. The browser checks run only in CI because
 Cloudflare's build image lacks the libraries Chromium needs.
 
-## Security and licence
+## Security and license
 
 Report vulnerabilities privately; see [SECURITY.md](SECURITY.md). Code is
-[MIT](LICENSE); fonts keep their SIL OFL 1.1 licences in `static/fonts/`. The
+[MIT](LICENSE); fonts keep their SIL OFL 1.1 licenses in `static/fonts/`. The
 Kinglet name, logo and mascot are not covered by the MIT License; see
 [TRADEMARKS.md](TRADEMARKS.md).

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Checks the built site in ./public for the behaviour the site promises.
+# Checks the built site in ./public for the behavior the site promises.
 # Usage: hugo build --gc --minify --cleanDestinationDir && scripts/check-site.sh [public-dir]
 set -uo pipefail
 
@@ -60,11 +60,11 @@ check "tools empty state shows the mascot" bash -c "! grep -q 'class=empty' '$si
 check "every img has alt, width and height" \
   perl -0ne 'while (/<img\b([^>]*)>/g) { my $a = $1; $bad++ unless $a =~ /\balt\b/ && $a =~ /\bwidth=/ && $a =~ /\bheight=/ } END { exit($bad > 0) }' $(find "$site" -name '*.html')
 
-# Fonts are self-hosted (privacy rule) and ship with their SIL OFL 1.1 licences.
+# Fonts are self-hosted (privacy rule) and ship with their SIL OFL 1.1 licenses.
 check "Outfit font is self-hosted" test -f "$site/fonts/Outfit-Variable.woff2"
 check "JetBrains Mono font is self-hosted" test -f "$site/fonts/JetBrainsMono-Regular.woff2"
-check "Outfit licence ships with the font" grep -q "SIL Open Font License" "$site/fonts/Outfit-OFL.txt"
-check "JetBrains Mono licence ships with the font" grep -q "SIL Open Font License" "$site/fonts/JetBrainsMono-OFL.txt"
+check "Outfit license ships with the font" grep -q "SIL Open Font License" "$site/fonts/Outfit-OFL.txt"
+check "JetBrains Mono license ships with the font" grep -q "SIL Open Font License" "$site/fonts/JetBrainsMono-OFL.txt"
 check "stylesheet uses Outfit" grep -q -- "--font-sans:Outfit" "$site"/css/main*.css
 check "stylesheet uses JetBrains Mono for code" grep -q '"JetBrains Mono"' "$site"/css/main*.css
 check "home page preloads Outfit" grep -q 'rel=preload[^>]*Outfit-Variable.woff2' "$site/index.html"
@@ -97,6 +97,10 @@ tool_page() {
 tool_page laserlint "Checks an SVG before you laser it" "Not ready to burn: 1 problem and 4 warnings."
 tool_page laserfix "Repairs an SVG so your laser burns each line once" "Line burned twice   248.5 mm → 0.0 mm"
 
+# American English everywhere (brand rule): no British spellings in any page.
+british='\b(centre|colour|licence|behaviour|favourite|metre|millimetre|catalogue|grey|organis|recognis|optimis|customis|summaris|analys(e|es|ed|ing))'
+check "pages use American spelling" bash -c "! grep -rIliE --include='*.html' '$british' '$site'"
+
 # Code blocks scroll sideways on small screens, so keyboard users must be able to reach them (WCAG 2.1.1).
 check "code blocks can be scrolled with the keyboard" bash -c "! grep -rIlE --include='*.html' '<pre>' '$site'"
 
@@ -106,13 +110,13 @@ home_bytes=$(cat "$site/index.html" "$site"/css/main*.css "$site/fonts/Outfit-Va
   "$site/favicon.svg" "$site/images/kinglet-mascot.svg" 2>/dev/null | wc -c)
 check "home page weight is under 100 KB (is $((home_bytes / 1024)) KB)" test "$home_bytes" -lt 102400
 
-# WCAG 2.2 AA contrast of the colour tokens, light and dark (scripts/check-contrast.py).
+# WCAG 2.2 AA contrast of the color tokens, light and dark (scripts/check-contrast.py).
 stylesheets=("$site"/css/main*.css)
 check "exactly one stylesheet is built" test "${#stylesheets[@]}" -eq 1 -a -f "${stylesheets[0]}"
 if python3 "$(dirname "$0")/check-contrast.py" "${stylesheets[0]}"; then
-  pass "colour tokens meet WCAG 2.2 AA contrast"
+  pass "color tokens meet WCAG 2.2 AA contrast"
 else
-  fail "colour tokens meet WCAG 2.2 AA contrast"
+  fail "color tokens meet WCAG 2.2 AA contrast"
 fi
 
 if [[ $failures -gt 0 ]]; then
