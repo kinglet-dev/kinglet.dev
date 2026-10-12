@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Checks WCAG 2.2 AA contrast of the site's colour tokens in light and dark themes.
+"""Checks WCAG 2.2 AA contrast of the site's color tokens in light and dark themes.
 
 Reads the built stylesheet, takes the custom properties declared on :root
 (light theme) and inside @media (prefers-color-scheme: dark) (dark theme), and
@@ -29,10 +29,10 @@ def tokens(block):
     return {name: value.strip() for name, value in DECLARATION.findall(block)}
 
 
-def luminance(colour):
-    match = HEX.match(colour)
+def luminance(color):
+    match = HEX.match(color)
     if not match:
-        raise ValueError(f"not a hex colour: {colour!r}")
+        raise ValueError(f"not a hex color: {color!r}")
     digits = match.group(1)
     if len(digits) == 3:
         digits = "".join(d * 2 for d in digits)
