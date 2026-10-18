@@ -1,0 +1,8 @@
+# Release files Kinglet Preflight runs in the browser, pinned by SHA-256.
+# scripts/fetch-preflight.sh downloads them from each tool's GitHub release
+# and refuses any file whose checksum differs. To move to new releases, run
+#   scripts/pin-preflight.sh laserlint VERSION laserfix VERSION
+# Columns: tool, version, then the SHA-256 of <tool>_<version>.wasm,
+# <tool>_<version>_wasm_exec.js and <tool>_<version>_wasm_exec_LICENSE.txt.
+laserlint 0.2.0 unpinned unpinned unpinned
+laserfix 0.2.0 unpinned unpinned unpinned

@@ -97,6 +97,25 @@ tool_page() {
 tool_page laserlint "Checks an SVG before you laser it" "Not ready to burn: 1 problem and 4 warnings."
 tool_page laserfix "Repairs an SVG so your laser burns each line once" "Line burned twice   248.5 mm → 0.0 mm"
 
+# Kinglet Preflight (/preflight/): both tools run in the browser from pinned,
+# checksum-verified release files (preflight.lock, scripts/fetch-preflight.sh).
+preflight_lock="${PREFLIGHT_LOCK:-$(dirname "$0")/../preflight.lock}"
+for tool in laserlint laserfix; do
+  for file in "$tool.wasm" "${tool}_wasm_exec.js" "${tool}_wasm_exec_LICENSE.txt"; do
+    check "Preflight ships $file" test -s "$site/preflight/wasm/$file"
+  done
+  check "Preflight's $tool files match the pinned checksums" python3 - "$preflight_lock" "$site/preflight/wasm" "$tool" <<'PY'
+import hashlib, sys
+lock, folder, tool = sys.argv[1:]
+rows = [line.split() for line in open(lock) if line.strip() and not line.startswith("#")]
+row = next(r for r in rows if r[0] == tool)
+names = [f"{tool}.wasm", f"{tool}_wasm_exec.js", f"{tool}_wasm_exec_LICENSE.txt"]
+digest = lambda name: hashlib.sha256(open(f"{folder}/{name}", "rb").read()).hexdigest()
+sys.exit(any(digest(n) != h for n, h in zip(names, row[2:5])))
+PY
+done
+check "Go's license ships with wasm_exec.js" grep -q "Copyright 2009 The Go Authors" "$site/preflight/wasm/laserlint_wasm_exec_LICENSE.txt"
+
 # American English everywhere (brand rule): no British spellings in any page.
 british='\b(centre|colour|licence|behaviour|favourite|metre|millimetre|catalogue|grey|organis|recognis|optimis|customis|summaris|analys(e|es|ed|ing))'
 check "pages use American spelling" bash -c "! grep -rIliE --include='*.html' '$british' '$site'"
