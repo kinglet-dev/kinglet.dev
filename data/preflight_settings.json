@@ -1,0 +1,93 @@
+[
+  {
+    "tool": "laserlint",
+    "flag": "line",
+    "label": "Line width",
+    "default": "0.10mm",
+    "help": "Width of a scored line."
+  },
+  {
+    "tool": "laserlint",
+    "flag": "gap",
+    "label": "Gap",
+    "default": "0.25mm",
+    "help": "Clear gap needed between the edges of two lines."
+  },
+  {
+    "tool": "laserlint",
+    "flag": "warn-close",
+    "label": "Warn when lines are too close",
+    "default": "1%",
+    "help": "Share of the line too close to other line that gives a warning."
+  },
+  {
+    "tool": "laserlint",
+    "flag": "max-close",
+    "label": "Lines too close: problem above",
+    "default": "10%",
+    "help": "Share of the line too close to other line that is a problem."
+  },
+  {
+    "tool": "laserlint",
+    "flag": "warn-density",
+    "label": "Density: warn above",
+    "default": "0.9",
+    "help": "mm of line per mm² in the densest 10 mm area."
+  },
+  {
+    "tool": "laserlint",
+    "flag": "max-density",
+    "label": "Density: problem above",
+    "default": "2",
+    "help": "mm of line per mm² in the densest 10 mm area."
+  },
+  {
+    "tool": "laserlint",
+    "flag": "detail",
+    "label": "Smallest detail",
+    "default": "0.5mm",
+    "help": "Smallest closed shape that survives, across."
+  },
+  {
+    "tool": "laserlint",
+    "flag": "max-details",
+    "label": "Small details: problem above",
+    "default": "20",
+    "help": "How many closed shapes may be smaller than the smallest detail."
+  },
+  {
+    "tool": "laserlint",
+    "flag": "max-crossings",
+    "label": "Crossings: problem above",
+    "default": "50",
+    "help": "How many places score lines may cross."
+  },
+  {
+    "tool": "laserlint",
+    "flag": "max-stacked",
+    "label": "Line on other line: problem above",
+    "default": "2mm",
+    "help": "How much line may lie on other line."
+  },
+  {
+    "tool": "laserfix",
+    "flag": "same",
+    "label": "Same line within",
+    "default": "0.02mm",
+    "help": "Lines nearer than this are the same line."
+  },
+  {
+    "tool": "laserfix",
+    "flag": "join",
+    "label": "Join ends within",
+    "default": "0.05mm",
+    "help": "Ends nearer than this are joined."
+  },
+  {
+    "tool": "laserfix",
+    "flag": "report-gaps",
+    "label": "Report gaps up to",
+    "default": "1mm",
+    "help": "Gaps wider than the join distance and up to this are reported, never closed."
+  }
+]
