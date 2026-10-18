@@ -100,6 +100,28 @@ tool_page laserfix "Repairs an SVG so your laser burns each line once" "Line bur
 # Kinglet Preflight (/preflight/): both tools run in the browser from pinned,
 # checksum-verified release files (preflight.lock, scripts/fetch-preflight.sh).
 preflight_lock="${PREFLIGHT_LOCK:-$(dirname "$0")/../preflight.lock}"
+preflight="$site/preflight/index.html"
+check "Preflight page exists" test -f "$preflight"
+check "Preflight page has its own search title" grep -q "<title>Check and fix laser SVG files online, free · Kinglet Preflight</title>" "$preflight"
+check "Preflight page describes itself for search results" grep -qE '<meta name=description content="Find lines your laser would burn twice[^"]{40,120}">' "$preflight"
+check "Preflight page has one h1" test "$(grep -o '<h1' "$preflight" | wc -l)" -eq 1
+check "Preflight page offers the file chooser" grep -q '<input type=file id=design' "$preflight"
+check "Preflight page says the file stays on the computer" grep -q "your file is checked right here in your browser" "$preflight"
+check "Preflight page has a link preview (Open Graph) with an image" grep -q '<meta property="og:image" content="https://kinglet.dev/images/preflight-share.png">' "$preflight"
+check "Preflight page has a large Twitter card" grep -q '<meta name=twitter:card content="summary_large_image">' "$preflight"
+check "Preflight page describes itself as a free web app (JSON-LD)" python3 - "$preflight" <<'PY'
+import json, re, sys
+html = open(sys.argv[1]).read()
+block = re.search(r'<script type=application/ld\+json>(.*?)</script>', html, re.S).group(1)
+data = json.loads(block)
+sys.exit(not (data["@type"] == "WebApplication" and data["name"] == "Kinglet Preflight"
+              and data["offers"]["price"] == "0" and data["url"] == "https://kinglet.dev/preflight/"))
+PY
+check "Preflight page is in the sitemap" grep -q "<loc>https://kinglet.dev/preflight/</loc>" "$site/sitemap.xml"
+check "Preflight page's CSP lets it run its scripts but connect nowhere" \
+  grep -qF "connect-src 'none'" <(sed -n '/^\/preflight\/$/,/^$/p' "$site/_headers")
+check "Preflight's worker may compile WebAssembly, and nothing riskier" bash -c \
+  "sed -n '/^\/preflight\/js\/\*/,/^\$/p' '$site/_headers' | grep -qF \"script-src 'self' 'wasm-unsafe-eval';\" && ! grep -qE \"unsafe-eval'|unsafe-inline\" <(sed 's/wasm-unsafe-eval//g' '$site/_headers')"
 for tool in laserlint laserfix; do
   for file in "$tool.wasm" "${tool}_wasm_exec.js" "${tool}_wasm_exec_LICENSE.txt"; do
     check "Preflight ships $file" test -s "$site/preflight/wasm/$file"

@@ -1,0 +1,105 @@
+{{- /* Kinglet Preflight: laserlint and laserfix in the browser. The tools run
+     in a worker (static/preflight/js/); this page is the chooser, the status,
+     the results and the advanced settings, then the questions from the content. */ -}}
+{{ define "head" }}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ .Params.seoTitle }}">
+<meta property="og:description" content="{{ .Description }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ .Params.shareImage | absURL }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ .Params.shareAlt }}">
+<meta name="twitter:card" content="summary_large_image">
+{{- $app := dict
+  "@context" "https://schema.org"
+  "@type" "WebApplication"
+  "name" .Title
+  "url" .Permalink
+  "description" .Description
+  "applicationCategory" "DesignApplication"
+  "operatingSystem" "Any, in a current web browser"
+  "browserRequirements" "Requires JavaScript and WebAssembly"
+  "isAccessibleForFree" true
+  "offers" (dict "@type" "Offer" "price" "0" "priceCurrency" "USD")
+  "publisher" (dict "@type" "Organization" "name" site.Title "url" site.BaseURL)
+}}
+<script type="application/ld+json">{{ $app | jsonify | safeJS }}</script>
+<script type="module" src="{{ "preflight/js/page.mjs" | relURL }}"></script>
+{{ end }}
+
+{{ define "main" }}
+<article class="preflight">
+  <h1>{{ .Params.heading }}</h1>
+  <p class="lead">{{ .Params.lead }}</p>
+
+  <div class="drop" data-drop>
+    <input type="file" id="design" class="visually-hidden" accept=".svg,image/svg+xml">
+    <label for="design" class="button">Choose an SVG</label>
+    <p>or drop it here</p>
+  </div>
+
+  <div class="progress">
+    <p role="status" data-status></p>
+    <span class="elapsed" data-elapsed></span>
+    <button type="button" class="button-secondary" data-stop hidden>Stop</button>
+  </div>
+  <p role="alert" class="error" data-error></p>
+
+  <div class="results" data-results hidden>
+    <figure class="preview">
+      <img data-preview src="data:," alt="" width="640" height="400">
+      <figcaption data-caption></figcaption>
+    </figure>
+
+    <section aria-labelledby="check-heading">
+      <h2 id="check-heading">Check</h2>
+      <p class="verdict" data-verdict></p>
+      <ul class="findings" data-findings></ul>
+    </section>
+
+    <section aria-labelledby="repair-heading">
+      <h2 id="repair-heading">Repair</h2>
+      <p data-repair-summary></p>
+      <ul class="findings" data-changes></ul>
+      <div data-left-area hidden>
+        <h3>Left as they are</h3>
+        <ul class="findings" data-left></ul>
+      </div>
+      <div data-measured-area hidden>
+        <h3>Checked again</h3>
+        <dl class="measured" data-measured></dl>
+      </div>
+      <p class="worse" data-worse hidden>
+        <strong>Worse after the changes:</strong> check the repaired copy before you burn it, and please
+        <a href="https://github.com/kinglet-dev/laserfix/issues">report this on GitHub</a>.
+      </p>
+      <p class="actions"><a class="button" data-download hidden>Download repaired copy</a></p>
+    </section>
+  </div>
+
+  <details class="settings">
+    <summary>Advanced settings</summary>
+    <form data-settings>
+      {{- range slice (dict "tool" "laserlint" "legend" "Check (laserlint)") (dict "tool" "laserfix" "legend" "Repair (laserfix)") }}
+      <fieldset>
+        <legend>{{ .legend }}</legend>
+        {{- range where hugo.Data.preflight_settings "tool" .tool }}
+        <div class="setting">
+          <label for="setting-{{ .flag }}">{{ .label }}</label>
+          <input id="setting-{{ .flag }}" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
+            data-tool="{{ .tool }}" data-flag="{{ .flag }}" aria-describedby="hint-{{ .flag }}">
+          <p class="hint" id="hint-{{ .flag }}">{{ .help }} Default {{ .default }} (<code>--{{ .flag }}</code>).</p>
+        </div>
+        {{- end }}
+      </fieldset>
+      {{- end }}
+      <p class="hint">Leave a setting empty to use its default. Lengths need a unit: mm, cm, in, pt or px.</p>
+      <button type="submit" class="button-secondary" data-again disabled>Check again</button>
+    </form>
+  </details>
+
+  <div class="about">{{ .Content }}</div>
+</article>
+{{ end }}

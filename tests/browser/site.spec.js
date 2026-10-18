@@ -2,7 +2,7 @@
 const { test, expect } = require("@playwright/test");
 const { serveWithCsp } = require("./csp");
 
-const pages = ["/", "/tools/", "/tools/laserlint/", "/tools/laserfix/", "/404.html"];
+const pages = ["/", "/tools/", "/tools/laserlint/", "/tools/laserfix/", "/preflight/", "/404.html"];
 const headerLinks = ".site-header nav a";
 
 // brandFont waits until the page shows Outfit. document.fonts.ready alone
