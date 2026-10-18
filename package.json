@@ -1,10 +1,11 @@
 {
   "name": "kinglet-dev-site",
   "private": true,
-  "description": "Browser checks for kinglet.dev (test tooling only; nothing here ships to the site).",
+  "description": "Unit and browser checks for kinglet.dev (test tooling only; nothing here ships to the site).",
   "license": "MIT",
   "scripts": {
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:unit": "node --test --experimental-test-coverage --test-coverage-include=static/preflight/js/** --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 tests/unit/*.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0"
