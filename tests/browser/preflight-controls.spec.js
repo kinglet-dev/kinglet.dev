@@ -89,6 +89,23 @@ test.describe("Kinglet Preflight's controls", () => {
     await expect(page.locator("[data-error]")).toBeEmpty();
   });
 
+  test("brings its progress into view when checking again", async ({ page }) => {
+    // Arrange
+    await page.setViewportSize({ width: 1280, height: 700 });
+    await choose(page, file("close.svg", svg(tooClose)));
+    await expect(status(page)).toContainText("Nothing to repair automatically", { timeout: 60000 });
+    await page.getByText("Advanced settings", { exact: true }).click();
+    await page.getByLabel("Gap", { exact: true }).fill("0.05mm");
+    await page.getByRole("button", { name: "Check again" }).scrollIntoViewIfNeeded();
+    await expect(status(page)).not.toBeInViewport();
+
+    // Act
+    await page.getByRole("button", { name: "Check again" }).click();
+
+    // Assert
+    await expect(status(page)).toBeInViewport();
+  });
+
   test("can't check again before a design is chosen", async ({ page }) => {
     // Act
     await page.getByText("Advanced settings", { exact: true }).click();

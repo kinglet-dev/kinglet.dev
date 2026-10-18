@@ -53,5 +53,7 @@ drop.addEventListener("drop", (event) => {
 $("settings").addEventListener("submit", (event) => {
   event.preventDefault();
   begin();
+  // The status is at the top of the page, far from this button: show it.
+  $("status").scrollIntoView({ block: "center" });
 });
 $("stop").addEventListener("click", () => tools.stop());
