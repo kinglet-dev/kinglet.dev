@@ -3,7 +3,7 @@
 // Both ports are passed in: runTool(name, args, bytes) runs a tool (in the
 // browser, in a worker) and resolves to { stdout, stderr, code }; ui is the
 // page (see view.mjs).
-import { checkReport, repairReport } from "./report.mjs";
+import { checkReport, repairReport, outcomes } from "./report.mjs";
 import { flags } from "./settings.mjs";
 
 const decode = (bytes) => new TextDecoder().decode(bytes);
@@ -32,7 +32,16 @@ export async function preflight({ name, bytes, fields }, { runTool, ui }) {
     const fix = await runTool("laserfix", ["--json", ...args.laserfix, "-", "-o", "-"], bytes);
     if (fix.code === 2) return ui.failed(explain(fix.stderr, name));
     const repair = repairReport(JSON.parse(fix.stderr));
-    ui.repaired(repair, repair.changes.length > 0 ? fix.stdout : null);
+    const copy = repair.changes.length > 0 ? fix.stdout : null;
+    let recheck = null;
+    if (copy) {
+      // Check the repaired copy too, to tell which problems it fixes.
+      ui.working("Checking the repaired copy");
+      const again = await runTool("laserlint", ["--json", ...args.laserlint, "-"], copy);
+      if (again.code === 2) return ui.failed(explain(again.stderr, "The repaired copy"));
+      recheck = checkReport(JSON.parse(decode(again.stdout)));
+    }
+    ui.repaired(repair, copy, outcomes(check, recheck));
     ui.finished(check, repair);
   } catch (error) {
     if (error.stopped) return ui.stopped();

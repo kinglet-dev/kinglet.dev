@@ -30,9 +30,11 @@ describe("preflight", () => {
     await preflight({ name: "twice.svg", bytes: bytes(svg(square + square)), fields: [] }, { runTool, ui });
 
     // Assert
-    assert.deepEqual(methods(), ["working Checking", "checked", "working Repairing", "repaired", "finished"]);
+    assert.deepEqual(methods(), ["working Checking", "checked", "working Repairing",
+      "working Checking the repaired copy", "repaired", "finished"]);
     const [, check] = calls[1];
-    const [, repair, repaired] = calls[3];
+    const [, repair, repaired, labels] = calls[4];
+    assert.equal(labels[check.items.findIndex((item) => item.severity === "problem")], "fixed");
     assert.match(check.verdict, /^Not ready to burn: /);
     assert.equal(repair.changes[0].label, "Copies");
     assert.equal(text(repaired), svg(square));
@@ -46,9 +48,11 @@ describe("preflight", () => {
     await preflight({ name: "square.svg", bytes: bytes(svg(square)), fields: [] }, { runTool, ui });
 
     // Assert
-    const [, repair, repaired] = calls.find(([m]) => m === "repaired");
+    const [, repair, repaired, labels] = calls.find(([m]) => m === "repaired");
     assert.equal(repair.heading, "Nothing to fix.");
     assert.equal(repaired, null);
+    assert.ok(labels.every((label) => label === null));
+    assert.ok(!calls.some(([m, step]) => m === "working" && step === "Checking the repaired copy"));
   });
 
   it("passes the advanced settings to each tool", async () => {
@@ -104,6 +108,20 @@ describe("preflight", () => {
     const [method, message] = calls.at(-1);
     assert.equal(method, "failed");
     assert.match(message, /^Check the advanced settings: .*--join/);
+  });
+
+  it("says so if the repaired copy can't be checked again", async () => {
+    // Arrange: the third run, checking the copy, fails
+    const { ui, calls } = recorder();
+    let runs = 0;
+    const third = (name, args, stdin) =>
+      (++runs === 3 ? Promise.resolve({ code: 2, stderr: "laserlint: standard input: broken\n" }) : runTool(name, args, stdin));
+
+    // Act
+    await preflight({ name: "twice.svg", bytes: bytes(svg(square + square)), fields: [] }, { runTool: third, ui });
+
+    // Assert
+    assert.deepEqual(calls.at(-1), ["failed", "The repaired copy: broken"]);
   });
 
   it("says so when stopped, and nothing more", async () => {

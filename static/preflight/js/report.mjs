@@ -52,6 +52,19 @@ export function checkReport(json) {
   return { ready: !json.findings.some((f) => f.severity === "problem"), verdict: verdict(json.findings), items };
 }
 
+// outcomes says, for each item of a check, whether the repaired copy fixes
+// it: "fixed" when checking the copy again finds nothing of that kind (the
+// same check, with the same fix), "by hand" when it still does or there is
+// no repaired copy (recheck is null), and null for information and checks
+// that found nothing.
+export function outcomes(check, recheck) {
+  const remaining = new Set((recheck?.items ?? []).map((item) => `${item.name}\n${item.fix}`));
+  return check.items.map((item) => {
+    if (item.severity !== "problem" && item.severity !== "warning") return null;
+    return recheck && !remaining.has(`${item.name}\n${item.fix}`) ? "fixed" : "by hand";
+  });
+}
+
 // laserfix -------------------------------------------------------------
 
 const plural = (n, one, many) => (n === 1 ? one : many);
