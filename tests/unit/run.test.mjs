@@ -2,6 +2,7 @@ import { describe, it, before } from "node:test";
 import assert from "node:assert/strict";
 import { run } from "../../static/preflight/js/run.mjs";
 import { tool, svg, square, tooClose, text } from "./helpers.mjs";
+import { laserlintDesigns } from "./fixtures.mjs";
 
 describe("run", () => {
   let laserlint, laserfix;
@@ -93,6 +94,30 @@ describe("run", () => {
 
     // Assert
     assert.equal(result.code, 1);
+  });
+
+  it("leaves no timer set once the program has exited", async () => {
+    // Arrange: track timers; Go still has one set when a busy design's run ends
+    const pending = new Set();
+    const { setTimeout: set, clearTimeout: clear } = globalThis;
+    globalThis.setTimeout = (fn, ms) => {
+      const id = set(() => { pending.delete(id); fn(); }, ms);
+      pending.add(id);
+      return id;
+    };
+    globalThis.clearTimeout = (id) => { pending.delete(id); clear(id); };
+
+    // Act
+    try {
+      await run(laserlint.Go, laserlint.module, { args: ["-"], stdin: laserlintDesigns["a busy area"] });
+    } finally {
+      Object.assign(globalThis, { setTimeout: set, clearTimeout: clear });
+    }
+    const left = pending.size;
+    for (const id of pending) clear(id);
+
+    // Assert
+    assert.equal(left, 0);
   });
 
   it("passes the arguments, such as --version", async () => {

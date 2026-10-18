@@ -72,5 +72,8 @@ export async function run(Go, module, { args, stdin }) {
   go.exit = (status) => { code = status; };
   const instance = await WebAssembly.instantiate(module, go.importObject);
   await go.run(instance);
+  // A program can exit with a Go timer still set; wasm_exec.js doesn't clear
+  // it, and when it fires it throws "Go program has already exited".
+  for (const timeout of go._scheduledTimeouts.values()) clearTimeout(timeout);
   return { stdout: join(fs.stdout), stderr: new TextDecoder().decode(join(fs.stderr)), code };
 }
