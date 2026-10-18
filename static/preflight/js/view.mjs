@@ -60,6 +60,7 @@ export function view(root) {
     },
 
     working(step) {
+      $("error").textContent = ""; // a new run starts clean
       clearInterval(ticking);
       const began = Date.now();
       $("elapsed").textContent = "";

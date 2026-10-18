@@ -71,6 +71,24 @@ test.describe("Kinglet Preflight's controls", () => {
     await expect(page.locator("[data-error]")).toBeEmpty();
   });
 
+  test("clears the error once the setting is corrected and checked again", async ({ page }) => {
+    // Arrange
+    await choose(page, file("square.svg", svg(square)));
+    await expect(status(page)).toContainText("Nothing to fix", { timeout: 60000 });
+    await page.getByText("Advanced settings", { exact: true }).click();
+    await page.getByLabel("Line width").fill("wide");
+    await page.getByRole("button", { name: "Check again" }).click();
+    await expect(page.getByRole("alert")).toHaveText(/^Check the advanced settings/, { timeout: 60000 });
+
+    // Act
+    await page.getByLabel("Line width").fill("0.1mm");
+    await page.getByRole("button", { name: "Check again" }).click();
+
+    // Assert
+    await expect(status(page)).toContainText("Nothing to fix", { timeout: 60000 });
+    await expect(page.locator("[data-error]")).toBeEmpty();
+  });
+
   test("can't check again before a design is chosen", async ({ page }) => {
     // Act
     await page.getByText("Advanced settings", { exact: true }).click();
