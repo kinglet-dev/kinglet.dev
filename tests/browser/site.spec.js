@@ -5,6 +5,11 @@ const { serveWithCsp } = require("./csp");
 const pages = ["/", "/tools/", "/tools/laserlint/", "/tools/laserfix/", "/404.html"];
 const headerLinks = ".site-header nav a";
 
+// brandFont waits until the page shows Outfit. document.fonts.ready alone
+// can resolve before the font starts loading when the machine is busy.
+const brandFont = (page) =>
+  page.waitForFunction(() => document.fonts.check("16px Outfit") && document.fonts.status === "loaded");
+
 for (const colorScheme of ["light", "dark"]) {
   test.describe(`In the ${colorScheme} theme`, () => {
     test.use({ colorScheme });
@@ -21,7 +26,7 @@ for (const colorScheme of ["light", "dark"]) {
 
         // Act
         await page.goto(path);
-        await page.evaluate(() => document.fonts.ready);
+        await brandFont(page);
         const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
 
         // Assert
@@ -99,7 +104,7 @@ for (const colorScheme of ["light", "dark"]) {
       await page.goto("/");
 
       // Act
-      await page.evaluate(() => document.fonts.ready);
+      await brandFont(page);
       const loaded = await page.evaluate(() => document.fonts.check("16px Outfit"));
 
       // Assert
