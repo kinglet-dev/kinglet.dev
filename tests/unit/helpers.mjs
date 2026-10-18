@@ -23,3 +23,11 @@ export const square = `<rect x="2" y="2" width="10" height="10" fill="none" stro
 export const tooClose = `<g fill="none" stroke="#000"><path d="M2 5 H12"/><path d="M2 5.2 H12"/></g>`;
 
 export const text = (bytes) => new TextDecoder().decode(bytes);
+
+// version is the release of a tool pinned in preflight.lock (or the lock
+// named by PREFLIGHT_LOCK), the one static/preflight/wasm/ holds.
+export async function version(name) {
+  const lock = process.env.PREFLIGHT_LOCK ?? fileURLToPath(new URL("../../preflight.lock", import.meta.url));
+  const row = (await readFile(lock, "utf8")).split("\n").find((line) => line.startsWith(`${name} `));
+  return row.split(" ")[1];
+}

@@ -1,7 +1,7 @@
 import { describe, it, before } from "node:test";
 import assert from "node:assert/strict";
 import { run } from "../../static/preflight/js/run.mjs";
-import { tool, svg, square, tooClose, text } from "./helpers.mjs";
+import { tool, svg, square, tooClose, text, version } from "./helpers.mjs";
 import { laserlintDesigns } from "./fixtures.mjs";
 
 describe("run", () => {
@@ -126,6 +126,6 @@ describe("run", () => {
 
     // Assert
     assert.equal(result.code, 0);
-    assert.match(text(result.stdout), /^laserfix 0\.2\.0-dev\n$/);
+    assert.equal(text(result.stdout), `laserfix ${await version("laserfix")}\n`);
   });
 });
