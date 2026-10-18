@@ -5,6 +5,7 @@ hero: "laserfix-hero"
 heroAlt: "A tag design whose outline and hole were pasted twice goes into laserfix, which removes the two copies and checks the result again: line burned twice goes from 248.5 mm to 0.0 mm, and crossings stay at 0."
 download: "https://github.com/kinglet-dev/laserfix/releases/latest"
 source: "https://github.com/kinglet-dev/laserfix"
+preflight: true
 weight: 2
 ---
 

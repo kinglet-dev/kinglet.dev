@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ if .IsHome }}{{ site.Title }}: {{ site.Params.tagline }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+  <title>{{ if .IsHome }}{{ site.Title }}: {{ site.Params.tagline }}{{ else }}{{ or .Params.seoTitle (printf "%s · %s" .Title site.Title) }}{{ end }}</title>
   <meta name="description" content="{{ or .Description site.Params.description }}">
   <link rel="canonical" href="{{ .Permalink }}">
   <link rel="icon" href="{{ "favicon.ico" | relURL }}" sizes="32x32">
@@ -13,6 +13,7 @@
   {{ with resources.Get "css/main.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}">
   {{ end }}
+  {{ block "head" . }}{{ end }}
 </head>
 <body>
   {{ partial "header.html" . }}

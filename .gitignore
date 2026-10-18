@@ -4,6 +4,9 @@
 /.hugo_build.lock
 /.cache/
 
+# Release files Kinglet Preflight runs, fetched and verified at build time
+/static/preflight/wasm/
+
 # Cloudflare / Wrangler local state
 /.wrangler/
 /node_modules/

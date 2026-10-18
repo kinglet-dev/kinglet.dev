@@ -5,3 +5,16 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
+
+# Kinglet Preflight runs laserlint and laserfix in the browser, so its page
+# may load its own scripts and start its worker, and shows the visitor's
+# design from a blob: URL; it still can't connect anywhere.
+/preflight/
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; worker-src 'self'; connect-src 'none'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+
+# Its worker loads the tools from this site and compiles their WebAssembly
+# ('wasm-unsafe-eval' allows only that, not eval), and nothing else.
+/preflight/js/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'

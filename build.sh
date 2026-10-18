@@ -20,6 +20,9 @@ tar -C "${HOME}/.local/hugo" -xf "${tmp_dir}/${HUGO_TARBALL}" hugo
 export PATH="${HOME}/.local/hugo:${PATH}"
 hugo version
 
+echo "Fetching the release files Kinglet Preflight runs..."
+bash scripts/fetch-preflight.sh
+
 echo "Building the site..."
 HUGO_CACHEDIR="${PWD}/.cache/hugo" hugo build --gc --minify --panicOnWarning --cleanDestinationDir
 

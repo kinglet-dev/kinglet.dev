@@ -97,6 +97,55 @@ tool_page() {
 tool_page laserlint "Checks an SVG before you laser it" "Not ready to burn: 1 problem and 4 warnings."
 tool_page laserfix "Repairs an SVG so your laser burns each line once" "Line burned twice   248.5 mm → 0.0 mm"
 
+# Kinglet Preflight (/preflight/): both tools run in the browser from pinned,
+# checksum-verified release files (preflight.lock, scripts/fetch-preflight.sh).
+preflight_lock="${PREFLIGHT_LOCK:-$(dirname "$0")/../preflight.lock}"
+preflight="$site/preflight/index.html"
+check "Preflight page exists" test -f "$preflight"
+check "Preflight page has its own search title" grep -q "<title>Check and fix laser SVG files online, free · Kinglet Preflight</title>" "$preflight"
+check "Preflight page describes itself for search results" grep -qE '<meta name=description content="Find lines your laser would burn twice[^"]{40,120}">' "$preflight"
+check "Preflight page has one h1" test "$(grep -o '<h1' "$preflight" | wc -l)" -eq 1
+check "Preflight page offers the file chooser" grep -q '<input type=file id=design' "$preflight"
+check "Preflight page says the file stays on the computer" grep -q "your file is checked right here in your browser" "$preflight"
+check "Preflight page has a link preview (Open Graph) with an image" grep -q '<meta property="og:image" content="https://kinglet.dev/images/preflight-share.png">' "$preflight"
+check "Preflight page has a large Twitter card" grep -q '<meta name=twitter:card content="summary_large_image">' "$preflight"
+check "Preflight page describes itself as a free web app (JSON-LD)" python3 - "$preflight" <<'PY'
+import json, re, sys
+html = open(sys.argv[1]).read()
+block = re.search(r'<script type=application/ld\+json>(.*?)</script>', html, re.S).group(1)
+data = json.loads(block)
+sys.exit(not (data["@type"] == "WebApplication" and data["name"] == "Kinglet Preflight"
+              and data["offers"]["price"] == "0" and data["url"] == "https://kinglet.dev/preflight/"))
+PY
+check "Preflight share image is a 1200 × 630 PNG" python3 -c '
+import struct, sys
+data = open(sys.argv[1], "rb").read(24)
+sys.exit(not (data[:8] == b"\x89PNG\r\n\x1a\n" and struct.unpack(">II", data[16:24]) == (1200, 630)))' "$site/images/preflight-share.png"
+check "home page links to Preflight" grep -q "href=/preflight/>" "$site/index.html"
+for tool in laserlint laserfix; do
+  check "$tool page offers to try it in the browser" grep -q "<a href=/preflight/>Try it in your browser</a>" "$site/tools/$tool/index.html"
+done
+check "Preflight page is in the sitemap" grep -q "<loc>https://kinglet.dev/preflight/</loc>" "$site/sitemap.xml"
+check "Preflight page's CSP lets it run its scripts but connect nowhere" \
+  grep -qF "connect-src 'none'" <(sed -n '/^\/preflight\/$/,/^$/p' "$site/_headers")
+check "Preflight's worker may compile WebAssembly, and nothing riskier" bash -c \
+  "sed -n '/^\/preflight\/js\/\*/,/^\$/p' '$site/_headers' | grep -qF \"script-src 'self' 'wasm-unsafe-eval';\" && ! grep -qE \"unsafe-eval'|unsafe-inline\" <(sed 's/wasm-unsafe-eval//g' '$site/_headers')"
+for tool in laserlint laserfix; do
+  for file in "$tool.wasm" "${tool}_wasm_exec.js" "${tool}_wasm_exec_LICENSE.txt"; do
+    check "Preflight ships $file" test -s "$site/preflight/wasm/$file"
+  done
+  check "Preflight's $tool files match the pinned checksums" python3 - "$preflight_lock" "$site/preflight/wasm" "$tool" <<'PY'
+import hashlib, sys
+lock, folder, tool = sys.argv[1:]
+rows = [line.split() for line in open(lock) if line.strip() and not line.startswith("#")]
+row = next(r for r in rows if r[0] == tool)
+names = [f"{tool}.wasm", f"{tool}_wasm_exec.js", f"{tool}_wasm_exec_LICENSE.txt"]
+digest = lambda name: hashlib.sha256(open(f"{folder}/{name}", "rb").read()).hexdigest()
+sys.exit(any(digest(n) != h for n, h in zip(names, row[2:5])))
+PY
+done
+check "Go's license ships with wasm_exec.js" grep -q "Copyright 2009 The Go Authors" "$site/preflight/wasm/laserlint_wasm_exec_LICENSE.txt"
+
 # American English everywhere (brand rule): no British spellings in any page.
 british='\b(centre|colour|licence|behaviour|favourite|metre|millimetre|catalogue|grey|organis|recognis|optimis|customis|summaris|analys(e|es|ed|ing))'
 check "pages use American spelling" bash -c "! grep -rIliE --include='*.html' '$british' '$site'"

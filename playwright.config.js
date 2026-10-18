@@ -6,6 +6,8 @@ const port = 4321;
 
 module.exports = defineConfig({
   testDir: "tests/browser",
+  // The page's own modules must have run in full (tests/browser/coverage.js).
+  globalTeardown: require.resolve("./tests/browser/coverage-teardown.js"),
   forbidOnly: true,
   retries: 0,
   reporter: [["list"]],
