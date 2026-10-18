@@ -5,6 +5,7 @@ hero: "laserlint-hero"
 heroAlt: "A coaster design goes into laserlint, which reports each check by name: a problem for lines too close, warnings for a crossing, a small detail, density and a white background, OK for line art, and the verdict: not ready to burn."
 download: "https://github.com/kinglet-dev/laserlint/releases/latest"
 source: "https://github.com/kinglet-dev/laserlint"
+preflight: true
 weight: 1
 ---
 

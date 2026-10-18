@@ -117,6 +117,14 @@ data = json.loads(block)
 sys.exit(not (data["@type"] == "WebApplication" and data["name"] == "Kinglet Preflight"
               and data["offers"]["price"] == "0" and data["url"] == "https://kinglet.dev/preflight/"))
 PY
+check "Preflight share image is a 1200 × 630 PNG" python3 -c '
+import struct, sys
+data = open(sys.argv[1], "rb").read(24)
+sys.exit(not (data[:8] == b"\x89PNG\r\n\x1a\n" and struct.unpack(">II", data[16:24]) == (1200, 630)))' "$site/images/preflight-share.png"
+check "home page links to Preflight" grep -q "href=/preflight/>" "$site/index.html"
+for tool in laserlint laserfix; do
+  check "$tool page offers to try it in the browser" grep -q "<a href=/preflight/>Try it in your browser</a>" "$site/tools/$tool/index.html"
+done
 check "Preflight page is in the sitemap" grep -q "<loc>https://kinglet.dev/preflight/</loc>" "$site/sitemap.xml"
 check "Preflight page's CSP lets it run its scripts but connect nowhere" \
   grep -qF "connect-src 'none'" <(sed -n '/^\/preflight\/$/,/^$/p' "$site/_headers")

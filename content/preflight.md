@@ -6,7 +6,7 @@ description: "Find lines your laser would burn twice or too close together, and 
 lead: "Find lines your laser would burn twice, lines too close together, specks and other problems before you cut, and download a repaired copy. Free, with nothing to install: your file is checked right here in your browser."
 layout: preflight
 shareImage: "images/preflight-share.png"
-shareAlt: "Kinglet Preflight: check and fix laser SVG files in your browser. A design goes in; lines burned twice come out at 0.0 mm."
+shareAlt: "Kinglet Preflight: check and fix laser SVG files, free, in your browser. It finds lines burned twice, lines too close and specks, and fixes what it safely can: line burned twice goes from 40.0 mm to 0.0 mm."
 ---
 
 ## How it works
