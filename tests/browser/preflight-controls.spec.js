@@ -106,6 +106,16 @@ test.describe("Kinglet Preflight's controls", () => {
     await expect(status(page)).toBeInViewport();
   });
 
+  test("says the repair is under way while it runs", async ({ page }) => {
+    // Act
+    await choose(page, file("busy.svg", busy()));
+    await expect(page.locator("[data-verdict]")).not.toBeEmpty({ timeout: 60000 });
+
+    // Assert
+    await expect(page.locator("[data-repair-summary]")).toHaveText("Repairing a copy of your design…");
+    await page.getByRole("button", { name: "Stop" }).click();
+  });
+
   test("can't check again before a design is chosen", async ({ page }) => {
     // Act
     await page.getByText("Advanced settings", { exact: true }).click();

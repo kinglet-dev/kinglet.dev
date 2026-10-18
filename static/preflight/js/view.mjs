@@ -76,7 +76,7 @@ export function view(root) {
       $("verdict").textContent = check.verdict;
       $("findings").replaceChildren(...check.items.map((f) => item(f.severity, f.name,
         [["", f.message], ["where", f.where && `Where: ${f.where}`], ["fix", f.fix && `Fix: ${f.fix}`]])));
-      $("repair-summary").textContent = "";
+      $("repair-summary").textContent = "Repairing a copy of your design…";
       $("changes").replaceChildren();
       show("left-area", false);
       show("measured-area", false);
