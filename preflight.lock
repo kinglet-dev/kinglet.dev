@@ -4,5 +4,5 @@
 #   scripts/pin-preflight.sh laserlint VERSION laserfix VERSION
 # Columns: tool, version, then the SHA-256 of <tool>_<version>.wasm,
 # <tool>_<version>_wasm_exec.js and <tool>_<version>_wasm_exec_LICENSE.txt.
-laserlint 0.2.0 unpinned unpinned unpinned
-laserfix 0.2.0 unpinned unpinned unpinned
+laserlint 0.2.0 4b03c29e1107bd609ee88c0923eb7f569ea7ee94e8b2581c17fe5aa696714e7c 0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14 911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad
+laserfix 0.2.0 6c68726e91d76161a4fd3a3d439ef0f4009e4e1a59d437d32fbd34750d1f9725 0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14 911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad
