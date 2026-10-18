@@ -16,11 +16,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22 # the unit tests' coverage limits need Node 22.8 or later
       - name: Build and check the site
         run: bash build.sh
+      - name: Install the test tools
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Unit tests of Preflight's modules (100% coverage)
+        run: npm run test:unit
       - name: Install the browser for the browser checks
-        run: |
-          npm ci --ignore-scripts --no-audit --no-fund
-          npx playwright install --with-deps --only-shell chromium
-      - name: Run the browser checks
+        run: npx playwright install --with-deps --only-shell chromium
+      - name: Run the browser checks (including accessibility, with axe-core)
         run: npx playwright test

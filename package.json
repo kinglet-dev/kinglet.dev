@@ -8,6 +8,7 @@
     "test:unit": "node --test --experimental-test-coverage --test-coverage-include=static/preflight/js/** --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 tests/unit/*.test.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "1.63.0"
+    "@playwright/test": "1.63.0",
+    "axe-core": "4.14.0"
   }
 }
