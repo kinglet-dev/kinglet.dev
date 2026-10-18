@@ -2,6 +2,16 @@
 // Every text from a report or a file goes in as text, never as HTML.
 
 const severities = { problem: "Problem", warning: "Warning", info: "Info", ok: "OK" };
+const outcomeWords = { fixed: "Fixed in the repaired copy", "by hand": "Fix by hand" };
+
+// What the Repair section says when it changes nothing although the check
+// found something to fix.
+const nothingAutomatic = "Nothing to repair automatically: automatic repair removes line that burns twice and "
+  + "joins outlines left in pieces or with a tiny gap, and this design has none of these. "
+  + "Each item marked “Fix by hand” above says how to fix it.";
+
+// needsFixing: the check found a problem or a warning.
+const needsFixing = (check) => check.items.some((f) => f.severity === "problem" || f.severity === "warning");
 
 // element makes an element with a class and text.
 function element(name, className, text) {
@@ -29,6 +39,7 @@ export function view(root) {
   let ticking = null;
   let downloadURL = null;
   let firstRun = true;
+  let lastCheck = null;
 
   const idle = (message) => {
     clearInterval(ticking);
@@ -49,6 +60,7 @@ export function view(root) {
     },
 
     working(step) {
+      $("error").textContent = ""; // a new run starts clean
       clearInterval(ticking);
       const began = Date.now();
       $("elapsed").textContent = "";
@@ -60,10 +72,11 @@ export function view(root) {
 
     checked(check) {
       firstRun = false;
+      lastCheck = check;
       $("verdict").textContent = check.verdict;
       $("findings").replaceChildren(...check.items.map((f) => item(f.severity, f.name,
         [["", f.message], ["where", f.where && `Where: ${f.where}`], ["fix", f.fix && `Fix: ${f.fix}`]])));
-      $("repair-summary").textContent = "";
+      $("repair-summary").textContent = "Repairing a copy of your design…";
       $("changes").replaceChildren();
       show("left-area", false);
       show("measured-area", false);
@@ -72,9 +85,15 @@ export function view(root) {
       show("results", true);
     },
 
-    repaired(repair, copy) {
+    // repaired: what laserfix changed or left, the copy (or null), and for
+    // each check item whether the copy fixes it (see report.mjs outcomes).
+    repaired(repair, copy, outcomes) {
       const detail = (entry) => item(null, entry.label, [["", entry.text], ["where", entry.where]]);
-      $("repair-summary").textContent = copy ? "The repaired copy has these changes:" : repair.heading;
+      [...$("findings").children].forEach((li, i) => {
+        if (outcomes[i]) li.firstChild.append(" · ", element("span", `outcome ${outcomes[i].replace(" ", "-")}`, outcomeWords[outcomes[i]]));
+      });
+      const summary = needsFixing(lastCheck) ? nothingAutomatic : repair.heading;
+      $("repair-summary").textContent = copy ? "The repaired copy has these changes:" : summary;
       $("changes").replaceChildren(...repair.changes.map(detail));
       $("left").replaceChildren(...repair.left.map(detail));
       show("left-area", repair.left.length > 0);
@@ -94,7 +113,9 @@ export function view(root) {
     },
 
     finished(check, repair) {
-      idle(`${check.verdict} ${repair.changes.length > 0 ? "A repaired copy is ready to download." : "Nothing to fix."}`);
+      const next = repair.changes.length > 0 ? "A repaired copy is ready to download."
+        : needsFixing(check) ? "Nothing to repair automatically." : "Nothing to fix.";
+      idle(`${check.verdict} ${next}`);
     },
 
     failed(message) {

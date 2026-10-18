@@ -27,6 +27,7 @@ test.describe("Kinglet Preflight", () => {
     await expect(page.getByRole("heading", { name: "Check", exact: true })).toBeVisible();
     await expect(page.locator("[data-verdict]")).toHaveText(/^Not ready to burn: /);
     await expect(page.locator("[data-findings]")).toContainText("Lines too close");
+    await expect(page.locator("[data-findings] li").filter({ hasText: "Lines too close" })).toContainText("Fixed in the repaired copy");
     await expect(page.locator("[data-changes]")).toContainText("Copies");
     await expect(page.locator("[data-changes]")).toContainText("1 shape removed, 40.0 mm of line burned twice");
     await expect(page.locator("[data-measured]")).toContainText("40.0 mm → 0.0 mm");
@@ -87,6 +88,18 @@ test.describe("Kinglet Preflight", () => {
 
     // Assert
     await expect(page.locator("[data-drop]")).not.toHaveClass(/dragging/);
+  });
+
+  test("says what to fix by hand when nothing can be repaired automatically", async ({ page }) => {
+    // Act
+    await choose(page, file("close.svg", svg(tooClose)));
+    await expect(status(page)).toContainText("Nothing to repair automatically.", { timeout: 60000 });
+
+    // Assert
+    await expect(page.locator("[data-findings] li").filter({ hasText: "Lines too close" })).toContainText("Fix by hand");
+    await expect(page.locator("[data-repair-summary]")).toHaveText(
+      "Nothing to repair automatically: automatic repair removes line that burns twice and joins outlines left in pieces or with a tiny gap, and this design has none of these. Each item marked “Fix by hand” above says how to fix it.");
+    await expect(page.getByRole("link", { name: "Download repaired copy" })).toBeHidden();
   });
 
   test("says when there's nothing to fix, and offers no download", async ({ page }) => {
