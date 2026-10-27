@@ -13,6 +13,12 @@
     <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
     <p>{{ .Params.heading }} with laserlint and laserfix, free and with nothing to install. Your file never leaves your computer.</p>
   </div>
+  {{ with site.GetPage "/saymake" }}
+  <div class="tool">
+    <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    <p>Describe a vase, bowl, tray or coaster and get a file to 3D print or laser cut, with saymake: free and with nothing to install. Nothing you type leaves your computer.</p>
+  </div>
+  {{ end }}
 </section>
 {{ end }}
 <section>

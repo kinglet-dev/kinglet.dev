@@ -18,3 +18,10 @@
 /preflight/js/*
   ! Content-Security-Policy
   Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'
+
+# Kinglet Saymake runs saymake's kit on the page itself: its module loads the
+# tool from this site and compiles its WebAssembly ('wasm-unsafe-eval' allows
+# only that, not eval), and it can't connect anywhere else.
+/saymake/
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'

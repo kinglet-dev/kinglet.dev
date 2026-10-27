@@ -14,6 +14,7 @@
     <a class="button" href="{{ . }}">Download</a>
     {{ with $.Params.source }}<a href="{{ . }}">Source on GitHub</a>{{ end }}
     {{ if $.Params.preflight }}<a href="{{ "/preflight/" | relURL }}">Try it in your browser</a>{{ end }}
+    {{ with $.Params.app }}<a href="{{ . | relURL }}">Try it in your browser</a>{{ end }}
   </p>
   {{ end }}
   {{ .Content }}
