@@ -23,6 +23,7 @@ Or, with Hugo, Python 3, Node.js 22+, Bash and Perl installed:
 
 ```sh
 bash scripts/fetch-preflight.sh   # Kinglet Preflight's tools, verified (see below)
+bash scripts/fetch-saymake.sh     # Kinglet Saymake's kit, verified (see below)
 hugo build --gc --minify --panicOnWarning --cleanDestinationDir
 bash scripts/check-site.sh public
 npm ci --ignore-scripts && npx playwright install chromium
@@ -41,6 +42,7 @@ npx playwright test   # browser checks against ./public, including axe-core
 | `static/preflight/js/` | Kinglet Preflight's page and worker modules. |
 | `data/preflight_settings.json` | Preflight's advanced settings: one per tool flag, with its default. |
 | `preflight.lock` | The tool releases Preflight runs, pinned by SHA-256. |
+| `saymake.lock` | The saymake release Kinglet Saymake runs, pinned by SHA-256. |
 | `assets-src/` | SVG sources of raster images, such as the share image. |
 | `scripts/` | Site checks and the contrast check. |
 | `tests/browser/` | Browser checks (Playwright). |
@@ -89,6 +91,27 @@ version that built it, in a worker (`static/preflight/js/worker.mjs`).
   100% (`tests/browser/coverage.js`). Run the whole browser suite for that.
 - **Share image:** after changing `assets-src/preflight-share.svg`, run
   `node scripts/make-share-image.js assets-src/preflight-share.svg static/images/preflight-share.png`.
+
+## Kinglet Saymake
+
+[/saymake/](https://kinglet.dev/saymake/) runs saymake's kit, which each
+saymake release publishes: the tool's markup (`_web.html`), its stylesheet
+(`_web.css`, scoped under `.saymake`), its module (`_web.js`), the `.wasm`
+and Go's `wasm_exec.js`. The page's code and its tests live in the saymake
+repository; this site pins the files and lays the page out.
+
+- **Release:** `build.sh` runs `scripts/fetch-saymake.sh`, which downloads
+  the release pinned in `saymake.lock` into `static/saymake/kit/` (not
+  committed) and stops if a checksum differs; `layouts/saymake.html` reads the
+  tool's markup from there. To move to a new release, run
+  `scripts/pin-saymake.sh VERSION`. saymake's release files are reproducible,
+  so the same source gives the same checksums.
+- **Security headers:** `/saymake/` may load its own files from the site and
+  compile WebAssembly, and connect nowhere else (`static/_headers`).
+- **Checks:** `scripts/check-site-saymake.sh` (run by `check-site.sh`) and
+  `tests/browser/saymake.spec.js` run the pinned kit under those headers.
+- **Share image:** after changing `assets-src/saymake-share.svg`, run
+  `node scripts/make-share-image.js assets-src/saymake-share.svg static/images/saymake-share.png`.
 
 ## Deploy
 

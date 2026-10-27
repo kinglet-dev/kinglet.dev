@@ -96,6 +96,7 @@ tool_page() {
 }
 tool_page laserlint "Checks an SVG before you laser it" "Not ready to burn: 1 problem and 4 warnings."
 tool_page laserfix "Repairs an SVG so your laser burns each line once" "Line burned twice   248.5 mm → 0.0 mm"
+tool_page saymake "Describe an object in plain words and get a shape to 3D print or laser cut" "Made a vase, 100.8 × 100.8 × 200 mm."
 
 # Kinglet Preflight (/preflight/): both tools run in the browser from pinned,
 # checksum-verified release files (preflight.lock, scripts/fetch-preflight.sh).
@@ -145,6 +146,9 @@ sys.exit(any(digest(n) != h for n, h in zip(names, row[2:5])))
 PY
 done
 check "Go's license ships with wasm_exec.js" grep -q "Copyright 2009 The Go Authors" "$site/preflight/wasm/laserlint_wasm_exec_LICENSE.txt"
+
+# Kinglet Saymake (/saymake/): checks in their own file, sharing check().
+source "$(dirname "$0")/check-site-saymake.sh"
 
 # American English everywhere (brand rule): no British spellings in any page.
 british='\b(centre|colour|licence|behaviour|favourite|metre|millimetre|catalogue|grey|organis|recognis|optimis|customis|summaris|analys(e|es|ed|ing))'

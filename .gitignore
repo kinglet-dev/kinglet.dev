@@ -6,6 +6,7 @@
 
 # Release files Kinglet Preflight runs, fetched and verified at build time
 /static/preflight/wasm/
+/static/saymake/kit/
 
 # Cloudflare / Wrangler local state
 /.wrangler/

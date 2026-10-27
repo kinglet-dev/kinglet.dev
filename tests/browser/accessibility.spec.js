@@ -6,7 +6,7 @@ const { serveWithCsp } = require("./csp");
 const { svg, square, file } = require("./preflight-fixtures");
 
 const axeSource = fs.readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
-const pages = ["/", "/tools/", "/tools/laserlint/", "/tools/laserfix/", "/preflight/", "/404.html"];
+const pages = ["/", "/tools/", "/tools/laserlint/", "/tools/laserfix/", "/tools/saymake/", "/preflight/", "/saymake/", "/404.html"];
 
 // violations runs axe-core in the page (page.evaluate isn't bound by the
 // page's CSP) and lists each rule broken, with the elements that break it.
@@ -39,6 +39,22 @@ for (const colorScheme of ["light", "dark"]) {
         expect(broken).toEqual([]);
       });
     }
+
+    test("Saymake's result, checks and settings meet WCAG 2.2 AA", async ({ page }) => {
+      // Arrange
+      await page.goto("/saymake/");
+      await expect(page.getByRole("status")).toHaveText("Ready. Describe an object to start.", { timeout: 30000 });
+      await page.getByLabel("Description", { exact: true }).fill("a mug with a thick handle");
+      await page.getByRole("button", { name: "Make it" }).click();
+      await expect(page.getByRole("list", { name: "Printing checks" })).toBeVisible();
+      await page.getByText("Printer", { exact: true }).click();
+
+      // Act
+      const broken = await violations(page);
+
+      // Assert
+      expect(broken).toEqual([]);
+    });
 
     test("Preflight's results and settings meet WCAG 2.2 AA", async ({ page }) => {
       // Arrange

@@ -1,0 +1,41 @@
+{{- /* Kinglet Saymake: saymake's kit in the browser. The tool's markup is the
+     pinned release's web.html (fetched and verified into static/saymake/kit/
+     by scripts/fetch-saymake.sh before the build); its module and stylesheet
+     load from beside it. Then the questions from the content. */ -}}
+{{ define "head" }}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ .Params.seoTitle }}">
+<meta property="og:description" content="{{ .Description }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ .Params.shareImage | absURL }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ .Params.shareAlt }}">
+<meta name="twitter:card" content="summary_large_image">
+{{- $app := dict
+  "@context" "https://schema.org"
+  "@type" "WebApplication"
+  "name" .Title
+  "url" .Permalink
+  "description" .Description
+  "applicationCategory" "DesignApplication"
+  "operatingSystem" "Any, in a current web browser"
+  "browserRequirements" "Requires JavaScript and WebAssembly"
+  "isAccessibleForFree" true
+  "offers" (dict "@type" "Offer" "price" "0" "priceCurrency" "USD")
+  "publisher" (dict "@type" "Organization" "name" site.Title "url" site.BaseURL)
+}}
+<script type="application/ld+json">{{ $app | jsonify | safeJS }}</script>
+<link rel="stylesheet" href="{{ "saymake/kit/web.css" | relURL }}">
+<script type="module" src="{{ "saymake/kit/web.js" | relURL }}"></script>
+{{ end }}
+
+{{ define "main" }}
+<article class="saymake-page">
+  <h1>{{ .Params.heading }}</h1>
+  <p class="lead">{{ .Params.lead }}</p>
+  {{ readFile "static/saymake/kit/web.html" | safeHTML }}
+  <div class="about">{{ .Content }}</div>
+</article>
+{{ end }}
