@@ -1,0 +1,7 @@
+# Release files Kinglet Saymake runs in the browser, pinned by SHA-256.
+# scripts/fetch-saymake.sh downloads them from saymake's GitHub release and
+# refuses any file whose checksum differs. To move to a new release, run
+#   scripts/pin-saymake.sh VERSION
+# Columns: tool, version, then the SHA-256 of saymake_<version>.wasm,
+# _wasm_exec.js, _wasm_exec_LICENSE.txt, _web.js, _web.css and _web.html.
+saymake 0.1.0 b0058db39385745127103073dc87a1380f40cc783867b5d0ab85ffe8374b1b15 0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14 911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad c67d2b38ea12dc040cd6177de4c7a235ba70386a6c64e6706465e53fb20db014 916d80dbedb8a5e8b3e4496c1ee598849be27f789d5ef8f05a7bc00172fc4497 b9c70d0c3efd830c05141648b6b64a64e06a11416677c474cc8211275b50b9c5
